@@ -1,0 +1,18 @@
+/* Hướng dẫn nhập môn BetterLevel RPG */
+#bl-onboarding { position:fixed; inset:0; z-index:99999; display:none; font-family:inherit; }
+#bl-onboarding.bl-open { display:block; }
+#bl-onboarding .bl-shade { position:absolute; inset:0; background:rgba(5,8,18,.78); }
+#bl-onboarding .bl-card { position:absolute; left:50%; bottom:max(18px,env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(560px,calc(100% - 24px)); max-height:72vh; overflow:auto; background:#171e2e; color:#f4f6ff; border:1px solid #6575a0; border-radius:18px; padding:20px; box-shadow:0 18px 60px #0009; }
+#bl-onboarding .bl-card h2 { margin:0 0 10px; font-size:21px; }
+#bl-onboarding .bl-card p { line-height:1.6; color:#d2d9eb; }
+#bl-onboarding .bl-actions { display:flex; justify-content:space-between; gap:8px; margin-top:18px; flex-wrap:wrap; }
+#bl-onboarding button { border:0; border-radius:10px; padding:10px 15px; cursor:pointer; font:inherit; font-weight:700; }
+#bl-onboarding .bl-next { background:#e7bd59; color:#17120a; }
+#bl-onboarding .bl-back,#bl-onboarding .bl-skip { background:#303b55; color:white; }
+#bl-onboarding .bl-progress { height:6px; background:#303b55; border-radius:99px; overflow:hidden; margin:12px 0 18px; }
+#bl-onboarding .bl-progress span { display:block; height:100%; background:#e7bd59; transition:width .2s; }
+#bl-onboarding .bl-field { display:block; margin:12px 0; }
+#bl-onboarding input[type=text],#bl-onboarding input[type=file] { display:block; box-sizing:border-box; width:100%; margin-top:6px; padding:10px; border:1px solid #64718c; border-radius:9px; background:#0f1523; color:white; }
+#bl-onboarding .bl-preview { width:72px;height:72px;object-fit:cover;border-radius:50%;border:2px solid #e7bd59;margin-top:10px; }
+.bl-spotlight { position:relative!important; z-index:100000!important; outline:3px solid #f5c75e!important; outline-offset:5px!important; border-radius:8px; }
+@media(max-width:480px){#bl-onboarding .bl-card{padding:16px;bottom:max(10px,env(safe-area-inset-bottom));max-height:78vh}#bl-onboarding .bl-card h2{font-size:19px}}
