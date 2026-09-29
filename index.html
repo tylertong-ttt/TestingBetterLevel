@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+<link rel="stylesheet" href="./css/onboarding.css">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3452,6 +3453,24 @@
       localStorage.setItem(STORAGE_KEY_V8, JSON.stringify(state));
       render();
     }
+    // Cầu nối để hướng dẫn nhập môn cập nhật hồ sơ nhân vật
+window.BetterLevelProfile = {
+  getState() {
+    return state;
+  },
+
+  updateProfile(data) {
+    if (typeof data.heroName === "string") {
+      state.heroName = data.heroName.trim();
+    }
+
+    if (typeof data.avatarUrl === "string") {
+      state.avatarUrl = data.avatarUrl;
+    }
+
+    saveState();
+  }
+};
 
     function getExpForLevel(lvl) {
       return Math.floor(100 * Math.pow(1.12, lvl - 1));
@@ -5889,5 +5908,6 @@
   window.addEventListener('resize', hardenBackgroundMedia, {passive:true});
 })();
 </script>
+<script src="./js/onboarding.js" defer></script>
 </body>
 </html>
