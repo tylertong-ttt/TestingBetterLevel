@@ -869,6 +869,56 @@
     .task-form-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,360px);gap:8px;align-items:center;}
     .task-rank-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;min-width:0;}
     .task-rank-wrap select{width:100%;min-width:0;}
+
+    /* V17 — Task Necessity / Urgency: 4 mức độ, mặc định thấp nhất */
+    .task-necessity-panel{
+      display:flex;flex-direction:column;gap:6px;min-width:0;padding:9px 10px 10px;
+      border:1px solid rgba(255,255,255,.08);border-radius:13px;
+      background:rgba(255,255,255,.025);
+    }
+    .task-necessity-label{display:flex;align-items:center;justify-content:space-between;gap:8px;
+      font-size:11px;font-weight:800;color:#fff;}
+    .task-necessity-label small{font-size:9.5px;color:var(--subtext);font-weight:600;}
+    .task-necessity-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;min-width:0;}
+    .task-necessity-option{
+      appearance:none;width:100%;min-width:0;min-height:58px;padding:7px 6px!important;
+      display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      border:1.5px solid rgba(255,255,255,.10)!important;border-radius:11px!important;
+      background:rgba(10,15,28,.72)!important;color:var(--subtext)!important;
+      box-shadow:none!important;transform:none!important;transition:.18s ease;
+      text-align:center;cursor:pointer;
+    }
+    .task-necessity-option .necessity-icon{font-size:17px;line-height:1;}
+    .task-necessity-option .necessity-name{font-size:10.5px;font-weight:900;line-height:1.1;}
+    .task-necessity-option .necessity-desc{font-size:8.5px;line-height:1.15;color:var(--subtext);opacity:.9;}
+    .task-necessity-option[data-necessity="1"]{--necessity-color:#22c55e;}
+    .task-necessity-option[data-necessity="2"]{--necessity-color:#38bdf8;}
+    .task-necessity-option[data-necessity="3"]{--necessity-color:#f59e0b;}
+    .task-necessity-option[data-necessity="4"]{--necessity-color:#f43f5e;}
+    .task-necessity-option:hover,.task-necessity-option.active{
+      color:#fff!important;border-color:var(--necessity-color)!important;
+      box-shadow:0 0 0 1px color-mix(in srgb,var(--necessity-color) 35%,transparent),0 6px 18px color-mix(in srgb,var(--necessity-color) 16%,transparent)!important;
+      background:color-mix(in srgb,var(--necessity-color) 10%,rgba(10,15,28,.88))!important;
+    }
+    .task-necessity-option.active .necessity-name{color:var(--necessity-color);}
+    .task-necessity-option:focus-visible{outline:2px solid var(--necessity-color);outline-offset:2px;}
+
+    .task-necessity-badge{
+      display:inline-flex;align-items:center;gap:4px;margin-left:7px;padding:2px 7px;
+      border:1px solid var(--necessity-color);border-radius:8px;background:rgba(255,255,255,.025);
+      color:var(--necessity-color);font-size:9.5px;font-weight:900;vertical-align:middle;
+    }
+    .task-necessity-badge .necessity-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--necessity-color);box-shadow:0 0 8px var(--necessity-color);}
+    .task-item{transition:.18s ease;}
+    .task-item:hover{transform:translateY(-1px);}
+    @media(max-width:700px){
+      .task-necessity-panel{padding:8px;}
+      .task-necessity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+      .task-necessity-option{min-height:54px;}
+      .task-necessity-option .necessity-name{font-size:10px;}
+      .task-necessity-option .necessity-desc{font-size:8.2px;}
+    }
+
     .task-reward-help,.deadline-help{width:28px;height:28px;margin-left:0!important;}
     .task-deadline-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;min-width:0;}
     .task-submit{min-width:142px;min-height:36px;}
@@ -2210,6 +2260,27 @@
               <button type="button" class="help-dot task-reward-help" onclick="showTaskRewardInfo()" title="Xem phần thưởng theo Rank">?</button>
             </div>
           </div>
+          <div class="task-necessity-panel" aria-label="Mức độ cần thiết của nhiệm vụ">
+            <div class="task-necessity-label">
+              <span>🚨 Mức độ cần thiết</span>
+              <small>Không chọn = Thấp</small>
+            </div>
+            <input type="hidden" id="taskNecessity" value="1">
+            <div class="task-necessity-grid" role="radiogroup" aria-label="Chọn mức độ cần thiết">
+              <button type="button" class="task-necessity-option active" data-necessity="1" onclick="selectTaskNecessity(1,event)" role="radio" aria-checked="true" title="Thấp — Có thể làm sau">
+                <span class="necessity-icon">🟢</span><span class="necessity-name">Thấp</span><span class="necessity-desc">Có thể làm sau</span>
+              </button>
+              <button type="button" class="task-necessity-option" data-necessity="2" onclick="selectTaskNecessity(2,event)" role="radio" aria-checked="false" title="Bình thường — Nên hoàn thành">
+                <span class="necessity-icon">🔵</span><span class="necessity-name">Bình thường</span><span class="necessity-desc">Nên hoàn thành</span>
+              </button>
+              <button type="button" class="task-necessity-option" data-necessity="3" onclick="selectTaskNecessity(3,event)" role="radio" aria-checked="false" title="Quan trọng — Ưu tiên">
+                <span class="necessity-icon">🟠</span><span class="necessity-name">Quan trọng</span><span class="necessity-desc">Ưu tiên xử lý</span>
+              </button>
+              <button type="button" class="task-necessity-option" data-necessity="4" onclick="selectTaskNecessity(4,event)" role="radio" aria-checked="false" title="Nguy cấp — Xử lý ngay">
+                <span class="necessity-icon">🔴</span><span class="necessity-name">Nguy cấp</span><span class="necessity-desc">Xử lý ngay</span>
+              </button>
+            </div>
+          </div>
           <div class="task-deadline-row">
             <div class="deadline-input-wrap">
               <input type="text" id="taskDeadline" title="Deadline (tùy chọn)" inputmode="numeric" autocomplete="off" placeholder="dd/mm/yyyy HH:mm" aria-label="Deadline ngày và giờ">
@@ -3473,8 +3544,8 @@
     // Migration an toàn từ bản cũ: giữ nguyên tiến trình RPG và bổ sung lịch sử task.
     if (!state.tasks) state.tasks = [];
     if (!state.taskHistory) state.taskHistory = [];
-    state.tasks = state.tasks.map(t => ({ ...t, createdAt:t.createdAt || Date.now(), deadline:t.deadline || null }));
-    state.taskHistory = state.taskHistory.map(t => ({ ...t, createdAt:t.createdAt || Date.now(), completedAt:t.completedAt || null, deadline:t.deadline || null }));
+    state.tasks = state.tasks.map(t => ({ ...t, necessity:normalizeTaskNecessity(t.necessity), createdAt:t.createdAt || Date.now(), deadline:t.deadline || null }));
+    state.taskHistory = state.taskHistory.map(t => ({ ...t, necessity:normalizeTaskNecessity(t.necessity), createdAt:t.createdAt || Date.now(), completedAt:t.completedAt || null, deadline:t.deadline || null }));
 
     if (!state.slotLevels) {
       state.slotLevels = { hat: 0, armor: 0, pants: 0, shoes: 0, weapon: 0, costume: 0, item1: 0, item2: 0, item3: 0 };
@@ -4001,14 +4072,16 @@ window.BetterLevelProfile = {
 
       listEl.innerHTML=filtered.length?filtered.map(t=>{
         const r=TASK_RANK_META[t.diff]||TASK_RANK_META[1];
+        const necessity=getTaskNecessityMeta(t);
         const deadline=getDeadlineState(t);
-        const border=deadline.cls==='deadline-overdue'?'rgba(244,63,94,0.28)':'rgba(255,255,255,0.06)';
+        const border=deadline.cls==='deadline-overdue'?'rgba(244,63,94,0.28)':necessity.color;
         return `
-          <li style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; margin-bottom:8px; border:1px solid ${border};">
+          <li class="task-item" style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; margin-bottom:8px; border:1.5px solid ${border}; box-shadow:inset 3px 0 0 ${necessity.color};">
             <div style="min-width:0; flex:1;">
               <div>
                 <b style="font-size:13.5px;">${escapeHtml(t.title)}</b>
                 <span style="font-size:11px; padding:2px 8px; border-radius:8px; background:rgba(255,255,255,0.06); color:${r.color}; margin-left:8px; font-weight:bold;">[${r.text}]</span>
+                <span class="task-necessity-badge" style="--necessity-color:${necessity.color};" title="${necessity.text} — ${necessity.desc}"><span class="necessity-badge-dot"></span>${necessity.icon} ${necessity.text}</span>
               </div>
               <div class="task-meta-row">
                 <span class="${deadline.cls}" style="font-size:10.5px; font-weight:700;">⏱️ ${deadline.text}</span>
@@ -4112,11 +4185,45 @@ window.BetterLevelProfile = {
     /* ============================================================
        7. NHIỆM VỤ FANTASY & NGUỒN RƠI THẠCH ANH
        ============================================================ */
+    const TASK_NECESSITY_META = {
+      1: { text:'Thấp', desc:'Có thể làm sau', color:'#94a3b8', icon:'🟢' },
+      2: { text:'Bình thường', desc:'Nên hoàn thành', color:'#38bdf8', icon:'🔵' },
+      3: { text:'Quan trọng', desc:'Ưu tiên xử lý', color:'#f59e0b', icon:'🟠' },
+      4: { text:'Nguy cấp', desc:'Xử lý ngay', color:'#f43f5e', icon:'🔴' }
+    };
+
+    function normalizeTaskNecessity(value){
+      const n=Number(value);
+      return Number.isInteger(n) && n>=1 && n<=4 ? n : 1;
+    }
+
+    function selectTaskNecessity(value,event){
+      playSfx('click');
+      const necessity=normalizeTaskNecessity(value);
+      const input=document.getElementById('taskNecessity');
+      if(input) input.value=String(necessity);
+      document.querySelectorAll('.task-necessity-option').forEach(btn=>{
+        const active=Number(btn.dataset.necessity)===necessity;
+        btn.classList.toggle('active',active);
+        btn.setAttribute('aria-checked',active?'true':'false');
+      });
+    }
+
+    function resetTaskNecessity(){
+      selectTaskNecessity(1);
+    }
+
+    function getTaskNecessityMeta(task){
+      return TASK_NECESSITY_META[normalizeTaskNecessity(task?.necessity)] || TASK_NECESSITY_META[1];
+    }
+
     function addTask() {
       playSfx('click');
       resetDailyCycles();
       const input = document.getElementById('taskTitle');
       const diff = parseInt(document.getElementById('taskDiff').value);
+      const necessityInput = document.getElementById('taskNecessity');
+      const necessity = normalizeTaskNecessity(necessityInput ? necessityInput.value : 1);
       const deadlineInput = document.getElementById('taskDeadline');
       if (!input.value.trim()) { showSiteToast('Hãy nhập tên nhiệm vụ trước.','warning','📋'); return; }
       const deadlineValue = deadlineInput ? deadlineInput.value.trim() : '';
@@ -4132,11 +4239,13 @@ window.BetterLevelProfile = {
         id: Date.now(),
         title: input.value.trim(),
         diff: diff,
+        necessity: necessity,
         createdAt: Date.now(),
         createdHour: new Date().getHours(),
         deadline: deadline
       });
       input.value = "";
+      resetTaskNecessity();
       if(deadlineInput){ deadlineInput.value=''; deadlineInput.classList.remove('input-error'); }
       showSiteToast('Đã nhận ủy thác mới.'+(deadline?` Hạn: ${formatDateTime(deadline)}.`:''),'success','📜',2600);
       saveState();
@@ -5739,12 +5848,14 @@ window.BetterLevelProfile = {
        ============================================================ */
     function exportDataCSV() {
       playSfx('click');
-      let csv="Loai,Ten,Rank,Deadline,Completed,OnTime\n";
+      let csv="Loai,Ten,Rank,Necessity,Deadline,Completed,OnTime\n";
       state.tasks.forEach(t=>{
-        csv+=`Task,"${String(t.title).replace(/"/g,'""')}",Rank_${t.diff},"${t.deadline?formatDateTime(t.deadline):''}","",""\n`;
+        const necessity=getTaskNecessityMeta(t);
+        csv+=`Task,"${String(t.title).replace(/"/g,'""')}",Rank_${t.diff},"${necessity.text}","${t.deadline?formatDateTime(t.deadline):''}","",""\n`;
       });
       state.taskHistory.forEach(t=>{
-        csv+=`CompletedTask,"${String(t.title).replace(/"/g,'""')}",Rank_${t.diff},"${t.deadline?formatDateTime(t.deadline):''}","${t.completedAt?formatDateTime(t.completedAt):''}","${t.completedOnTime===false?'No':'Yes'}"\n`;
+        const necessity=getTaskNecessityMeta(t);
+        csv+=`CompletedTask,"${String(t.title).replace(/"/g,'""')}",Rank_${t.diff},"${necessity.text}","${t.deadline?formatDateTime(t.deadline):''}","${t.completedAt?formatDateTime(t.completedAt):''}","${t.completedOnTime===false?'No':'Yes'}"\n`;
       });
       const blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
       const a=document.createElement('a');
@@ -5789,8 +5900,8 @@ window.BetterLevelProfile = {
           if (!Array.isArray(state.equippedRunes)) state.equippedRunes=[null,null,null,null];
           while(state.equippedRunes.length<4) state.equippedRunes.push(null);
           state.equippedRunes=state.equippedRunes.slice(0,4);
-          state.tasks = state.tasks.map(t => ({...t, createdAt:t.createdAt || Date.now(), deadline:t.deadline || null}));
-          state.taskHistory = state.taskHistory.map(t => ({...t, createdAt:t.createdAt || Date.now(), completedAt:t.completedAt || null, deadline:t.deadline || null}));
+          state.tasks = state.tasks.map(t => ({...t, necessity:normalizeTaskNecessity(t.necessity), createdAt:t.createdAt || Date.now(), deadline:t.deadline || null}));
+          state.taskHistory = state.taskHistory.map(t => ({...t, necessity:normalizeTaskNecessity(t.necessity), createdAt:t.createdAt || Date.now(), completedAt:t.completedAt || null, deadline:t.deadline || null}));
           playSfx('buy');
           saveState();
           alert("Khôi phục toàn bộ tiến trình thành công!");
