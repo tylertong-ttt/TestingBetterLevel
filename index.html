@@ -3249,6 +3249,48 @@
       }
     ];
 
+    /* ============================================================
+       QUARTZ ASSET CONFIG — CHỈNH ẢNH 3 LOẠI THẠCH ANH TẠI ĐÂY
+       - url   : ảnh gốc; có thể thay bằng URL ảnh khác.
+       - filter: màu/ánh sáng để 3 cấp vẫn đồng bộ phong cách với
+                 ảnh Thạch Anh hiện có trong Shop.
+       ============================================================ */
+    const QUARTZ_IMAGE_CONFIG = {
+      basic: {
+        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
+        filter: 'saturate(0.95) hue-rotate(175deg) brightness(0.96) contrast(1.05)'
+      },
+      pure: {
+        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
+        filter: 'saturate(1.15) hue-rotate(120deg) brightness(1.08) contrast(1.08)'
+      },
+      chaos: {
+        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
+        filter: 'saturate(1.55) hue-rotate(265deg) brightness(0.88) contrast(1.15)'
+      }
+    };
+
+    const QUARTZ_ID_TO_KEY = {
+      quartz_basic: 'basic',
+      quartz_pure: 'pure',
+      quartz_chaos: 'chaos'
+    };
+
+    function getQuartzImageUrl(key, size=250) {
+      const cfg = QUARTZ_IMAGE_CONFIG[key];
+      if (!cfg || !cfg.url) return '';
+      const url = String(cfg.url);
+      if (/images\.unsplash\.com/i.test(url) && !/[?&]w=/.test(url)) {
+        return `${url}?w=${size}&auto=format&fit=crop&q=${size >= 400 ? 70 : 60}`;
+      }
+      return url;
+    }
+
+    function getQuartzImageStyle(key) {
+      const cfg = QUARTZ_IMAGE_CONFIG[key];
+      return cfg && cfg.filter ? `filter:${cfg.filter};` : '';
+    }
+
     const DEFAULT_SHOP_CATALOG = [
       // Hồi phục HP (heal)
       { id: 'flask_vitality', category: 'heal', name: 'Sinh Mệnh Tinh Thủy', price: 40, img: 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 100 HP cho nhân vật.' },
@@ -3270,8 +3312,10 @@
       { id: 'shield_item', category: 'buff', name: 'Khiên Streak', price: 90, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Bảo vệ chuỗi ngày nếu lỡ quên làm nhiệm vụ.' },
       { id: 'gacha_ticket', category: 'gacha', name: '🎟️ Vé Gacha', price: 150, img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=250&auto=format&fit=crop&q=60', desc: 'Một vé quay Gacha. Giá cố định 150 Vàng.' },
 
-      // Nguyên liệu Thạch Anh bán trong Shop
-      { id: 'quartz_pure', category: 'buff', name: 'Thạch Anh Tinh Khiết', price: 180, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60', desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
+      // Nguyên liệu Thạch Anh bán trong Shop — đủ 3 cấp
+      { id: 'quartz_basic', category: 'buff', name: 'Thạch Anh Sơ Cấp', price: 60, img: getQuartzImageUrl('basic', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.' },
+      { id: 'quartz_pure', category: 'buff', name: 'Thạch Anh Tinh Khiết', price: 180, img: getQuartzImageUrl('pure', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
+      { id: 'quartz_chaos', category: 'buff', name: 'Thạch Anh Hỗn Độn', price: 500, img: getQuartzImageUrl('chaos', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.' },
 
       // Rương báu (chest)
       { id: 'chest_wood', category: 'chest', name: 'Rương Gỗ', price: 40, img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=250&auto=format&fit=crop&q=60', desc: 'Rương sơ cấp: lượng Vàng/EXP nhỏ, chủ yếu hỗ trợ tiến trình và có cơ hội nhận Thạch Anh.' },
@@ -3401,6 +3445,22 @@
     else {
       const ticketMeta = DEFAULT_SHOP_CATALOG.find(x => x.id === 'gacha_ticket');
       if (ticketMeta && !state.shopCatalog.some(x => x.id === 'gacha_ticket')) state.shopCatalog.push({...ticketMeta});
+
+      // Migration an toàn: chỉ bổ sung 2 Thạch Anh còn thiếu và đồng bộ ảnh
+      // cho 3 loại; không ghi đè giá hay dữ liệu tuỳ chỉnh của các item khác.
+      DEFAULT_SHOP_CATALOG
+        .filter(item => QUARTZ_ID_TO_KEY[item.id])
+        .forEach(item => {
+          const existing = state.shopCatalog.find(x => x.id === item.id);
+          if (existing) {
+            existing.img = item.img;
+            existing.category = item.category;
+            existing.name = item.name;
+            existing.desc = item.desc;
+          } else {
+            state.shopCatalog.push({...item});
+          }
+        });
     }
     if (!state.consumables) state.consumables = {};
     if (typeof state.consumables.pomodoro_tomato !== 'number') state.consumables.pomodoro_tomato = 0;
@@ -4671,9 +4731,9 @@ window.BetterLevelProfile = {
       const eq=(state.equipmentInventory||[]).find(x=>x.name===name);
       if(eq&&eq.img) return eq.img;
       const quartzMap={
-        'Thạch Anh Sơ Cấp':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
-        'Thạch Anh Tinh Khiết':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
-        'Thạch Anh Hỗn Độn':'https://images.unsplash.com/photo-1563089145-599997674d42?w=420&auto=format&fit=crop&q=70'
+        'Thạch Anh Sơ Cấp': getQuartzImageUrl('basic', 420),
+        'Thạch Anh Tinh Khiết': getQuartzImageUrl('pure', 420),
+        'Thạch Anh Hỗn Độn': getQuartzImageUrl('chaos', 420)
       };
       return quartzMap[name]||'';
     }
@@ -4735,8 +4795,9 @@ window.BetterLevelProfile = {
       if (state.coins < finalPrice) return alert("Bạn không đủ Vàng để mua!");
       state.coins -= finalPrice;
 
-      if (itemKey === 'quartz_pure') {
-        state.quartz.pure = (state.quartz.pure || 0) + 1;
+      const quartzKey = QUARTZ_ID_TO_KEY[itemKey];
+      if (quartzKey) {
+        state.quartz[quartzKey] = (state.quartz[quartzKey] || 0) + 1;
       } else {
         state.consumables[itemKey] = (state.consumables[itemKey] || 0) + 1;
       }
@@ -5167,10 +5228,13 @@ window.BetterLevelProfile = {
         filtered = filtered.filter(item => item.category === currentConsumableFilter);
       }
 
-      document.getElementById('shopConsumables').innerHTML = filtered.map(item => `
+      document.getElementById('shopConsumables').innerHTML = filtered.map(item => {
+        const quartzKey = QUARTZ_ID_TO_KEY[item.id];
+        const quartzStyle = quartzKey ? ` style="${getQuartzImageStyle(quartzKey)}"` : '';
+        return `
         <div class="item-card">
           <div class="item-thumb-wrapper">
-            <img src="${item.img}" class="item-thumb-large">
+            <img src="${item.img}" class="item-thumb-large"${quartzStyle}>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <b style="font-size:13px;">${item.name}</b>
@@ -5182,7 +5246,8 @@ window.BetterLevelProfile = {
             <button onclick="buyConsumable('${item.id}')">Mua</button>
           </div>
         </div>
-      `).join('') || `<p style="font-size:13px; color:var(--subtext); grid-column:span 3;">Không có vật phẩm nào trong danh mục này.</p>`;
+      `;
+      }).join('') || `<p style="font-size:13px; color:var(--subtext); grid-column:span 3;">Không có vật phẩm nào trong danh mục này.</p>`;
     }
 
     function renderShopEquipment() {
@@ -5493,7 +5558,7 @@ window.BetterLevelProfile = {
       if ((state.quartz.basic || 0) > 0) {
         invConsHtml += `
           <div class="item-card">
-            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
+            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('basic', 250)}" style="${getQuartzImageStyle('basic')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Sơ Cấp</b><span style="color:var(--primary); font-weight:800;">x${state.quartz.basic}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv 0 -> +3.</small>
           </div>
@@ -5502,7 +5567,7 @@ window.BetterLevelProfile = {
       if ((state.quartz.pure || 0) > 0) {
         invConsHtml += `
           <div class="item-card">
-            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
+            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('pure', 250)}" style="${getQuartzImageStyle('pure')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Tinh Khiết</b><span style="color:var(--cyan); font-weight:800;">x${state.quartz.pure}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +4 -> +7.</small>
           </div>
@@ -5511,7 +5576,7 @@ window.BetterLevelProfile = {
       if ((state.quartz.chaos || 0) > 0) {
         invConsHtml += `
           <div class="item-card">
-            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1563089145-599997674d42?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
+            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('chaos', 250)}" style="${getQuartzImageStyle('chaos')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Hỗn Độn</b><span style="color:var(--red); font-weight:800;">x${state.quartz.chaos}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +8 -> +10.</small>
           </div>
