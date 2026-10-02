@@ -2124,14 +2124,122 @@
 }
 @media(max-width:700px){
   .quartz-shop-group{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
-  .quartz-shop-group .item-card{padding:7px;border-radius:11px;}
-  .quartz-shop-group .item-card button{font-size:9px;padding:6px 4px;}
+  .quartz-shop-group .item-card{padding:7px;border-radius:11px;overflow:hidden;}
+  .quartz-shop-group .item-card button{font-size:9px;padding:6px 4px;max-width:100%;white-space:normal;line-height:1.15;}
   .quartz-shop-group .item-thumb-wrapper{margin-bottom:6px;border-radius:9px;}
-  .quartz-shop-group .item-card b{font-size:10.5px!important;}
-  .quartz-shop-group .item-card p,.quartz-shop-group .quartz-type-pill{font-size:8.5px!important;}
-  .drag-handle{width:24px!important;height:21px!important;top:6px!important;right:6px!important;font-size:11px!important;}
+  .quartz-shop-group .item-card b{font-size:10px!important;line-height:1.16!important;overflow-wrap:anywhere;word-break:break-word;}
+  .quartz-shop-group .item-card p,.quartz-shop-group .quartz-type-pill{font-size:8px!important;line-height:1.25!important;overflow-wrap:anywhere;word-break:break-word;}
+  .quartz-edit-row{gap:4px;align-items:stretch;}
+  .quartz-type-pill{min-width:0;flex:1 1 auto;white-space:normal;text-align:center;padding:3px 5px;}
+  .quartz-edit-row .secondary{flex:0 1 56px;min-width:0!important;max-width:56px;white-space:normal;line-height:1.05;padding:4px 4px!important;font-size:8px!important;}
+  .quartz-shop-group .item-card > div[style*="justify-content:space-between"]{min-width:0;flex-wrap:wrap;}
+  .quartz-shop-group .item-card > div[style*="justify-content:space-between"] > span{min-width:0;overflow-wrap:anywhere;}
+  .drag-handle{display:none!important;}
   .gacha-banner{width:calc(100% + 24px);margin-left:-12px;height:190px;min-height:190px;padding:16px;}
   .gacha-banner-content{max-width:100%;}
+}
+
+/* Mobile-safe item layout: no visible drag marker, but HTML5 drag/swap remains enabled. */
+.item-card.is-draggable{cursor:default;}
+.item-card .drag-handle{display:none!important;}
+@media(max-width:700px){
+  .item-grid{min-width:0!important;width:100%;}
+  .item-card{min-width:0!important;max-width:100%;overflow:hidden;}
+  .item-card b,.item-card small,.item-card p{overflow-wrap:anywhere;word-break:break-word;}
+}
+
+
+/* ============================================================
+   GACHA BANNER — SHARP SOURCE-RATIO DISPLAY OVERRIDE
+   Only affects #gachaBanner. The rest of the website is untouched.
+   The uploaded image is displayed at its own aspect ratio instead
+   of forcing background-size: cover (which crops/zooms the source).
+   ============================================================ */
+#gachaBanner.gacha-banner{
+  position:relative !important;
+  width:calc(100% + 40px) !important;
+  margin-left:-20px !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:0 !important;
+  display:block !important;
+  overflow:hidden !important;
+  background-color:#0a1020 !important;
+  background-image:none !important;
+  background-size:auto !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+  filter:none !important;
+  transform:none !important;
+  isolation:isolate;
+}
+#gachaBanner.gacha-banner > .gacha-banner-image{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+  max-width:none !important;
+  object-fit:fill !important;
+  object-position:center center !important;
+  filter:none !important;
+  opacity:1 !important;
+  transform:none !important;
+  image-rendering:auto !important;
+  z-index:0 !important;
+  user-select:none;
+  -webkit-user-drag:none;
+  pointer-events:none;
+}
+#gachaBanner.gacha-banner::before{
+  content:'' !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:1 !important;
+  pointer-events:none !important;
+  background:linear-gradient(
+    180deg,
+    rgba(5,8,15,0) 0%,
+    rgba(5,8,15,0) 57%,
+    rgba(5,8,15,.14) 78%,
+    rgba(5,8,15,.28) 100%
+  ) !important;
+}
+#gachaBanner.gacha-banner::after{display:none !important;}
+#gachaBanner.gacha-banner > .gacha-banner-content{
+  position:absolute !important;
+  left:22px !important;
+  right:22px !important;
+  bottom:20px !important;
+  max-width:780px !important;
+  z-index:2 !important;
+  margin:0 !important;
+  text-shadow:0 2px 12px rgba(0,0,0,.72);
+}
+@media(max-width:700px){
+  #gachaBanner.gacha-banner{
+    width:calc(100% + 24px) !important;
+    margin-left:-12px !important;
+  }
+  #gachaBanner.gacha-banner > .gacha-banner-content{
+    left:15px !important;
+    right:15px !important;
+    bottom:14px !important;
+    max-width:calc(100% - 30px) !important;
+  }
+  #gachaBanner.gacha-banner > .gacha-banner-content h3{
+    font-size:20px !important;
+    line-height:1.15 !important;
+  }
+  #gachaBanner.gacha-banner > .gacha-banner-content > div:last-child{
+    max-width:100% !important;
+    font-size:10px !important;
+    line-height:1.35 !important;
+    overflow-wrap:anywhere;
+  }
+  #gachaBanner.gacha-banner > .gacha-banner-content > div:first-child{
+    font-size:8.5px !important;
+  }
 }
 
 </style>
@@ -6440,5 +6548,102 @@ window.BetterLevelProfile = {
 </script>
 
 <script src="./js/onboarding.js" defer></script>
+
+<script>
+/* ============================================================
+   GACHA BANNER — LOAD THE REAL IMAGE AS <img>
+   This intentionally replaces the old "background-size: cover"
+   presentation only for the Gacha banner.
+   ============================================================ */
+(function(){
+  'use strict';
+
+  let resizeTimer = null;
+
+  function getCoverUrl(){
+    const input = document.getElementById('gachaCoverInput');
+    return input ? String(input.value || '').trim() : '';
+  }
+
+  function applyNaturalBannerRatio(){
+    const banner = document.getElementById('gachaBanner');
+    if(!banner) return;
+
+    const url = getCoverUrl();
+    let img = banner.querySelector('.gacha-banner-image');
+
+    if(!url){
+      if(img) img.remove();
+      banner.style.removeProperty('height');
+      banner.style.removeProperty('min-height');
+      banner.style.removeProperty('aspect-ratio');
+      return;
+    }
+
+    if(!img){
+      img = document.createElement('img');
+      img.className = 'gacha-banner-image';
+      img.alt = '';
+      img.draggable = false;
+      banner.insertBefore(img, banner.firstChild);
+    }
+
+    const normalizedUrl = url;
+    if(img.getAttribute('src') !== normalizedUrl){
+      img.onload = function(){
+        const nw = img.naturalWidth || 0;
+        const nh = img.naturalHeight || 0;
+        if(!nw || !nh) return;
+
+        const width = Math.max(1, banner.clientWidth);
+        const height = Math.round(width * nh / nw);
+
+        /* The banner height follows the source image ratio exactly.
+           No crop, no forced zoom, no distortion. */
+        banner.style.height = height + 'px';
+        banner.style.minHeight = height + 'px';
+        banner.style.aspectRatio = nw + ' / ' + nh;
+        banner.style.backgroundImage = 'none';
+      };
+      img.onerror = function(){
+        banner.style.height = '';
+        banner.style.minHeight = '';
+        banner.style.aspectRatio = '';
+      };
+      img.src = normalizedUrl;
+    } else if(img.complete && img.naturalWidth && img.naturalHeight){
+      const width = Math.max(1, banner.clientWidth);
+      const height = Math.round(width * img.naturalHeight / img.naturalWidth);
+      banner.style.height = height + 'px';
+      banner.style.minHeight = height + 'px';
+      banner.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+      banner.style.backgroundImage = 'none';
+    }
+  }
+
+  function scheduleBannerResize(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(applyNaturalBannerRatio, 80);
+  }
+
+  const previousRenderGacha = window.renderGacha;
+  window.renderGacha = function(){
+    if(typeof previousRenderGacha === 'function'){
+      previousRenderGacha.apply(this, arguments);
+    }
+    requestAnimationFrame(applyNaturalBannerRatio);
+  };
+
+  window.addEventListener('resize', scheduleBannerResize, {passive:true});
+  window.addEventListener('orientationchange', scheduleBannerResize, {passive:true});
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', applyNaturalBannerRatio, {once:true});
+  }else{
+    requestAnimationFrame(applyNaturalBannerRatio);
+  }
+})();
+</script>
+
 </body>
 </html>
