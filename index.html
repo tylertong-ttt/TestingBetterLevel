@@ -624,6 +624,32 @@
     .gacha-spin{font-size:15px!important;padding:12px 16px!important}
     .reward-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,13,.78);backdrop-filter:blur(9px);z-index:7000;padding:16px}
     .reward-panel{width:min(560px,96vw);background:linear-gradient(180deg,#10182a,#0c1220);border:1px solid rgba(99,102,241,.5);border-radius:22px;box-shadow:0 25px 70px rgba(0,0,0,.65),0 0 28px rgba(99,102,241,.15);overflow:hidden;animation:rewardIn .28s ease both}
+
+    .reward-panel{position:relative;isolation:isolate;}
+    .reward-panel::before{content:'';position:absolute;inset:-35%;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.42) 0%,rgba(251,191,36,.16) 18%,rgba(168,85,247,.08) 36%,transparent 66%);opacity:0;pointer-events:none;z-index:0;transform:scale(.45);}
+    .reward-panel.reward-reveal::before{animation:rewardFlash .9s ease-out both;}
+    .reward-panel>*{position:relative;z-index:1;}
+    .reward-panel.gacha-summon::after{content:'';position:absolute;left:50%;top:47%;width:250px;height:250px;transform:translate(-50%,-50%) rotate(0deg);border-radius:50%;border:1px dashed rgba(167,139,250,.48);box-shadow:0 0 35px rgba(124,58,237,.22),inset 0 0 35px rgba(56,189,248,.10);background:conic-gradient(from 0deg,transparent 0 12%,rgba(168,85,247,.24) 14%,transparent 16% 28%,rgba(56,189,248,.20) 30%,transparent 32% 52%,rgba(251,191,36,.18) 54%,transparent 56% 78%,rgba(168,85,247,.22) 80%,transparent 82%);pointer-events:none;z-index:0;opacity:0;animation:summonCircle 2.2s ease-out both;}
+    .reward-panel.gacha-summon .reward-icon{box-shadow:0 0 32px rgba(168,85,247,.28),0 0 65px rgba(56,189,248,.16);animation:summonPulse 1.2s ease-out both;}
+    .reward-panel.gacha-summon .reward-top{position:relative;overflow:hidden;}
+    .reward-panel.gacha-summon .reward-top::after{content:'';position:absolute;left:-20%;right:-20%;bottom:-70%;height:160%;background:radial-gradient(ellipse at center,rgba(168,85,247,.20) 0%,rgba(56,189,248,.10) 26%,transparent 68%);animation:gachaAurora 2.1s ease-out both;pointer-events:none;}
+    .reward-panel.gacha-summon .reward-name-pop{animation:gachaNamePop .6s cubic-bezier(.2,.9,.2,1) both;}
+    .reward-panel.chest-reveal .reward-icon{box-shadow:0 0 28px rgba(251,191,36,.26),0 0 55px rgba(255,255,255,.12);animation:chestPop .75s cubic-bezier(.2,.9,.2,1) both;}
+    .reward-panel.chest-reveal .reward-top{position:relative;overflow:hidden;}
+    .reward-panel.chest-reveal .reward-top::after{content:'';position:absolute;left:-25%;right:-25%;top:20%;height:3px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(251,191,36,.95),rgba(255,255,255,.95),transparent);filter:blur(.5px);animation:chestSweep .7s ease-out both;pointer-events:none;}
+    .reward-coin-particle,.reward-magic-particle{position:absolute;left:50%;top:46%;pointer-events:none;z-index:2;font-size:18px;animation:rewardParticleFly 1.05s cubic-bezier(.2,.8,.25,1) forwards;}
+    .reward-magic-particle{font-size:16px;filter:drop-shadow(0 0 8px rgba(168,85,247,.8));animation-duration:1.25s;}
+    .reward-panel.gacha-summon .reward-image{animation:rewardImageGlow .9s ease-out both;}
+    .reward-row-image{width:48px;height:48px;flex:0 0 48px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.12);margin-right:3px;box-shadow:0 5px 14px rgba(0,0,0,.28);background:rgba(255,255,255,.035);}
+    @keyframes gachaAurora{0%{opacity:0;transform:translateY(18%) rotate(-2deg)}35%{opacity:1}100%{opacity:0;transform:translateY(-8%) rotate(2deg)}}
+    @keyframes gachaNamePop{0%{opacity:0;transform:translateY(10px) scale(.95)}100%{opacity:1;transform:none}}
+    @keyframes chestPop{0%{transform:scale(.72);filter:brightness(.75)}38%{transform:scale(1.08);filter:brightness(1.45)}100%{transform:scale(1);filter:brightness(1)}}
+    @keyframes chestSweep{0%{opacity:0;transform:translateX(-20%) scaleX(.4)}25%{opacity:1}100%{opacity:0;transform:translateX(20%) scaleX(1.3)}}
+    @keyframes rewardParticleFly{0%{opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(0deg)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.05) rotate(var(--rot))}}
+    @keyframes rewardImageGlow{0%{filter:brightness(.8) saturate(.8)}35%{filter:brightness(1.5) saturate(1.2)}100%{filter:brightness(1) saturate(1)}}
+    @keyframes rewardFlash{0%{opacity:0;transform:scale(.3)}18%{opacity:1;transform:scale(.95)}45%{opacity:.7;transform:scale(1.22)}100%{opacity:0;transform:scale(1.65)}}
+    @keyframes summonCircle{0%{opacity:0;transform:translate(-50%,-50%) rotate(-25deg) scale(.5)}18%{opacity:1}70%{opacity:.8}100%{opacity:0;transform:translate(-50%,-50%) rotate(145deg) scale(1.15)}}
+    @keyframes summonPulse{0%{transform:scale(.78);filter:brightness(.8)}30%{transform:scale(1.06);filter:brightness(1.35)}100%{transform:scale(1);filter:brightness(1)}}
     .reward-top{padding:18px 20px 14px;background:linear-gradient(135deg,rgba(99,102,241,.16),rgba(168,85,247,.14));border-bottom:1px solid rgba(255,255,255,.08)}
     .reward-top h3{margin:0;font-size:19px}
     .reward-body{padding:18px 20px}
@@ -2780,7 +2806,8 @@
           </div>
           <div>
             <label style="font-size:12px; color:var(--subtext);">Giá Vàng niêm yết trong Shop:</label>
-            <input type="number" id="forgePrice" value="120" min="10" style="width:100%; margin-top:4px;">
+            <input type="number" id="forgePrice" value="300" min="50" style="width:100%; margin-top:4px;">
+            <div style="font-size:10px;color:var(--subtext);margin-top:3px;">Giá sẽ được cân bằng tự động theo phẩm chất và chỉ số, tránh quá rẻ hoặc quá đắt.</div>
           </div>
           <div style="grid-column: span 2;">
             <label style="font-size:12px; color:var(--subtext);">Hiệu ứng bổ trợ đặc biệt:</label>
@@ -2816,6 +2843,25 @@
               <option value="second_wind">💚 Hồi Sinh Phản Xạ: HP &lt; 35% → hồi 4% Max HP sau khi chịu đòn</option>
               <option value="treasure_seeker">💰 Thợ Săn Kho Báu: +15% cơ hội Vé Gacha từ Rương</option>
               <option value="deadline_master">⏱️ Kỷ Luật Chuẩn Giờ: hoàn thành task đúng hạn → +15% EXP</option>
+              <option value="stone_skin">🪨 Da Đá: +20% DEF, nhưng -5% EVA</option>
+              <option value="reflection">🔄 Phản Xạ: 15% cơ hội phản lại 20% sát thương vừa nhận</option>
+              <option value="berserk_sword">⚡ Cuồng Kiếm: 30% cơ hội đánh thêm, đòn thêm chỉ gây 60% DMG</option>
+              <option value="trickster">🎭 Kẻ Đánh Lừa: 12% cơ hội hủy phản đòn Boss</option>
+              <option value="mirror_reflect">🪞 Gương Phản Chiếu: né Boss thành công → đòn kế sao chép 20% DMG</option>
+              <option value="prophet_eye">👁️ Con Mắt Tiên Tri: sau mỗi 3 lượt hiển thị trước 1 hiệu ứng Boss</option>
+              <option value="lottery_player">🎲 Kẻ Chơi Xổ Số: 5% cơ hội x3 DMG / hồi 20% HP / +50 Vàng; 3% Xui Xẻo = 50% DMG</option>
+              <option value="shadow_hunter">🌑 Kẻ Săn Bóng Tối: không bị Boss đánh trúng 2 lượt → đòn kế x2 DMG</option>
+              <option value="recycle">♻️ Hoàn Lưu: đánh trúng cùng Boss lần thứ 5 → +1 Boss Token</option>
+              <option value="soul_reaper">💀 Đoạt Hồn: mỗi Boss mất thêm 10% HP → 1% nhận +1 Boss Token</option>
+              <option value="destiny">🕰️ Định Mệnh: còn đúng 1 Boss Token → +40% DMG</option>
+              <option value="money_power">🪙 Tiền Là Sức Mạnh: mỗi 500 Vàng → +2 ATK, tối đa +100 ATK</option>
+              <option value="fire_heart">❄️ Hỏa Tâm Thạch: giảm 50% hiệu ứng Đóng băng</option>
+              <option value="detox_charm">🧪 Giải Độc Bùa: giảm 50% sát thương Nhiễm độc</option>
+              <option value="counter_breaker">🛡️ Khiên Phá Phản: giảm 50% hiệu ứng Phản đòn</option>
+              <option value="shadow_eye">🌪️ Mắt Săn Bóng: giảm 30% tỷ lệ Boss Né</option>
+              <option value="shield_breaker">🔥 Diệt Khiên: gây thêm 20% DMG lên Boss đang có Khiên</option>
+              <option value="life_sapper">💚 Tước Sinh Lực: giảm 50% lượng hồi máu của Boss</option>
+              <option value="enrage_breaker">⚡ Phá Cuồng: khi Boss Cuồng nộ → giảm 50% bonus ATK của Boss</option>
             </select>
           </div>
           <div style="grid-column: span 2;">
@@ -3188,68 +3234,97 @@
       initAudio();
       try {
         const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        const tone = (freq, duration, volume=0.08, wave='sine', delay=0, endFreq=null) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = wave; osc.connect(gain); gain.connect(audioCtx.destination);
+          const t = now + delay;
+          osc.frequency.setValueAtTime(freq, t);
+          if (endFreq) osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq), t + duration);
+          gain.gain.setValueAtTime(volume, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+          osc.start(t); osc.stop(t + duration + 0.01);
+        };
+        const noiseBurst = (duration, volume=0.03, delay=0, filterFreq=1800, q=0.7) => {
+          const buffer = audioCtx.createBuffer(1, Math.max(1, Math.floor(audioCtx.sampleRate * duration)), audioCtx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+          const src = audioCtx.createBufferSource();
+          const filter = audioCtx.createBiquadFilter();
+          const gain = audioCtx.createGain();
+          src.buffer = buffer; filter.type = 'bandpass'; filter.frequency.value = filterFreq; filter.Q.value = q;
+          src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+          const t = now + delay; gain.gain.setValueAtTime(volume, t); gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+          src.start(t); src.stop(t + duration + 0.01);
+        };
 
         if (type === 'click') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
-          gain.gain.setValueAtTime(0.04, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
-          osc.start(now); osc.stop(now + 0.05);
+          tone(600,.05,.04,'sine',0);
         } else if (type === 'buy') {
-          osc.type = 'triangle'; osc.frequency.setValueAtTime(800, now); osc.frequency.setValueAtTime(1200, now + 0.06);
-          gain.gain.setValueAtTime(0.09, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
+          tone(800,.12,.07,'triangle',0); tone(1200,.18,.07,'triangle',.06);
         } else if (type === 'equip') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(450, now); osc.frequency.setValueAtTime(750, now + 0.05);
-          gain.gain.setValueAtTime(0.08, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
-          osc.start(now); osc.stop(now + 0.16);
+          tone(450,.1,.07,'sine',0); tone(750,.14,.08,'sine',.05);
         } else if (type === 'unequip') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(700, now); osc.frequency.setValueAtTime(400, now + 0.05);
-          gain.gain.setValueAtTime(0.07, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.14);
-          osc.start(now); osc.stop(now + 0.14);
+          tone(700,.08,.06,'sine',0); tone(400,.12,.06,'sine',.05);
         } else if (type === 'sell') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now + 0.08);
-          gain.gain.setValueAtTime(0.09, now); gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
-          osc.start(now); osc.stop(now + 0.3);
+          tone(523,.11,.07,'sine',0); tone(659,.18,.08,'sine',.08);
         } else if (type === 'coin') {
-          osc.type = 'triangle'; osc.frequency.setValueAtTime(987, now); osc.frequency.setValueAtTime(1318, now + 0.07);
-          gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
-          osc.start(now); osc.stop(now + 0.28);
+          tone(987,.11,.10,'triangle',0); tone(1318,.14,.10,'triangle',.08); tone(1568,.16,.07,'triangle',.16);
         } else if (type === 'hit') {
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(45, now + 0.14);
-          gain.gain.setValueAtTime(0.16, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
-          osc.start(now); osc.stop(now + 0.14);
+          tone(150,.14,.13,'sawtooth',0,45);
         } else if (type === 'crit') {
-          osc.type = 'square'; osc.frequency.setValueAtTime(320, now); osc.frequency.setValueAtTime(640, now + 0.07);
-          gain.gain.setValueAtTime(0.20, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
-          osc.start(now); osc.stop(now + 0.28);
+          tone(320,.12,.16,'square',0); tone(640,.18,.13,'square',.07);
         } else if (type === 'dodge') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(900, now); osc.frequency.exponentialRampToValueAtTime(1400, now + 0.15);
-          gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
-          osc.start(now); osc.stop(now + 0.18);
+          tone(900,.16,.10,'sine',0,1400);
         } else if (type === 'heal') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
-          gain.gain.setValueAtTime(0.12, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
+          tone(400,.18,.10,'sine',0,800); tone(800,.16,.07,'sine',.12,1200);
         } else if (type === 'chest') {
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(320, now); osc.frequency.exponentialRampToValueAtTime(750, now + 0.22);
-          gain.gain.setValueAtTime(0.13, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-          osc.start(now); osc.stop(now + 0.35);
-        } else if (type === 'gacha') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(300, now);
-          osc.frequency.setValueAtTime(450, now + 0.07);
-          osc.frequency.setValueAtTime(700, now + 0.14);
-          osc.frequency.setValueAtTime(1100, now + 0.24);
-          gain.gain.setValueAtTime(0.11, now);
-          gain.gain.linearRampToValueAtTime(0.001, now + 0.42);
-          osc.start(now); osc.stop(now + 0.42);
+          // Rương: khóa cơ khí -> nắp bật -> chuỗi tiền xu.
+          noiseBurst(.10,.025,.00,420,1.2);
+          tone(118,.10,.08,'triangle',0,82);
+          tone(235,.10,.08,'triangle',.08,335);
+          tone(470,.12,.09,'triangle',.18,705);
+          tone(705,.12,.08,'sine',.29,1050);
+          noiseBurst(.12,.018,.34,2300,0.9);
+          tone(1318,.10,.075,'triangle',.40,1760);
+          tone(1568,.12,.065,'triangle',.49,2093);
+          tone(1976,.14,.055,'sine',.58,2637);
+        } else if (type === 'chest_reveal') {
+          // Ánh sáng phần thưởng + leng keng như tiền xu.
+          tone(660,.10,.07,'sine',0,990);
+          tone(990,.12,.09,'triangle',.08,1480);
+          tone(1480,.13,.085,'triangle',.18,1976);
+          tone(1976,.17,.07,'sine',.29,2637);
+          tone(2637,.20,.055,'sine',.43,3296);
+          tone(1318,.12,.06,'triangle',.66,1760);
+          tone(1760,.12,.055,'triangle',.75,2349);
+        } else if (type === 'gacha_start') {
+          // Triệu hồi huyền bí: drone trầm + rung phép + vòng năng lượng.
+          noiseBurst(.30,.012,.00,420,0.55);
+          tone(73,.90,.038,'sine',0,58);
+          tone(146,.65,.035,'triangle',.08,98);
+          tone(220,.50,.045,'sine',.18,330);
+          tone(329,.42,.052,'triangle',.31,494);
+          tone(440,.38,.055,'sine',.44,659);
+          tone(554,.34,.060,'triangle',.57,831);
+          tone(659,.32,.065,'sine',.70,988);
+        } else if (type === 'gacha_reveal_common') {
+          tone(523,.10,.055,'sine',0,659); tone(784,.13,.065,'triangle',.08,1047);
+        } else if (type === 'gacha_reveal_rare') {
+          tone(392,.12,.055,'sine',0,523); tone(659,.15,.07,'triangle',.10,988); tone(1047,.18,.07,'sine',.22,1318);
+        } else if (type === 'gacha_reveal_epic') {
+          tone(330,.16,.06,'sine',0,440); tone(554,.18,.07,'triangle',.12,831); tone(831,.20,.08,'sine',.26,1245); tone(1661,.22,.075,'triangle',.40,2494);
+          noiseBurst(.20,.015,.38,2600,.7);
+        } else if (type === 'gacha_reveal_legendary') {
+          tone(247,.18,.06,'sine',0,330); tone(494,.20,.07,'triangle',.13,740); tone(988,.22,.08,'sine',.28,1480); tone(1480,.24,.085,'triangle',.42,2217); tone(2217,.28,.075,'sine',.58,3325);
+          noiseBurst(.28,.022,.53,3300,.6);
+        } else if (type === 'gacha_reveal_rune') {
+          tone(196,.20,.055,'sine',0,261); tone(293,.22,.065,'triangle',.15,392); tone(523,.25,.075,'sine',.32,784); tone(1047,.30,.08,'triangle',.52,1568); tone(1568,.36,.07,'sine',.72,3136);
+          noiseBurst(.35,.024,.66,4200,.55);
+        } else if (type === 'reward') {
+          tone(784,.14,.065,'sine',0); tone(1175,.18,.07,'triangle',.10); tone(1568,.22,.06,'triangle',.22);
         } else if (type === 'boss_hit') {
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(85, now);
-          gain.gain.setValueAtTime(0.18, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
-          osc.start(now); osc.stop(now + 0.22);
+          tone(85,.22,.15,'sawtooth',0);
         }
       } catch (e) { console.warn(e); }
     }
@@ -3506,7 +3581,26 @@
       armor_breaker: "🔨 Phá Giáp (+15% Xuyên Giáp Boss)",
       second_wind: "💚 Hồi Sinh Phản Xạ (HP < 35%: hồi 4% Max HP sau khi chịu đòn)",
       treasure_seeker: "💰 Thợ Săn Kho Báu (+15% cơ hội Vé Gacha từ Rương)",
-      deadline_master: "⏱️ Kỷ Luật Chuẩn Giờ (hoàn thành task đúng hạn: +15% EXP)"
+      deadline_master: "⏱️ Kỷ Luật Chuẩn Giờ (hoàn thành task đúng hạn: +15% EXP)",
+      stone_skin: "🪨 Da Đá (+20% DEF, nhưng -5% EVA)",
+      reflection: "🔄 Phản Xạ (15% cơ hội phản lại 20% sát thương vừa nhận)",
+      berserk_sword: "⚡ Cuồng Kiếm (30% cơ hội đánh thêm, đòn thêm gây 60% DMG)",
+      trickster: "🎭 Kẻ Đánh Lừa (12% cơ hội hủy phản đòn của Boss)",
+      mirror_reflect: "🪞 Gương Phản Chiếu (né Boss thành công → đòn kế sao chép 20% DMG)",
+      prophet_eye: "👁️ Con Mắt Tiên Tri (sau mỗi 3 lượt báo trước 1 hiệu ứng Boss)",
+      lottery_player: "🎲 Kẻ Chơi Xổ Số (5% cơ hội x3 DMG / hồi 20% HP / +50 Vàng; 3% Xui Xẻo = 50% DMG)",
+      shadow_hunter: "🌑 Kẻ Săn Bóng Tối (không bị Boss đánh trúng 2 lượt → đòn kế x2 DMG)",
+      recycle: "♻️ Hoàn Lưu (đánh trúng cùng Boss lần thứ 5 → +1 Boss Token)",
+      soul_reaper: "💀 Đoạt Hồn (mỗi Boss mất thêm 10% HP → 1% nhận +1 Boss Token)",
+      destiny: "🕰️ Định Mệnh (đang còn đúng 1 Boss Token → +40% DMG)",
+      money_power: "🪙 Tiền Là Sức Mạnh (mỗi 500 Vàng → +2 ATK, tối đa +100 ATK)",
+      fire_heart: "❄️ Hỏa Tâm Thạch (giảm 50% hiệu ứng Đóng băng)",
+      detox_charm: "🧪 Giải Độc Bùa (giảm 50% sát thương Nhiễm độc)",
+      counter_breaker: "🛡️ Khiên Phá Phản (giảm 50% hiệu ứng Phản đòn)",
+      shadow_eye: "🌪️ Mắt Săn Bóng (giảm 30% tỷ lệ Boss Né)",
+      shield_breaker: "🔥 Diệt Khiên (+20% DMG lên Boss đang có Khiên)",
+      life_sapper: "💚 Tước Sinh Lực (giảm 50% lượng hồi máu của Boss)",
+      enrage_breaker: "⚡ Phá Cuồng (khi Boss Cuồng nộ → giảm 50% bonus ATK của Boss)"
     };
 
     const RUNE_DATA = {
@@ -3567,6 +3661,8 @@
       if(s.enragedActivated!==true) s.enragedActivated=false;
       if(s.shieldTriggered!==true) s.shieldTriggered=false;
       if(!Number.isFinite(s.lastCounterBonus)) s.lastCounterBonus=0;
+      if(!Number.isFinite(s.itemHitCount)) s.itemHitCount=0;
+      if(!Number.isFinite(s.soulMilestone)) s.soulMilestone=0;
     }
     function bossHasEffect(map,key){
       return !!map && Array.isArray(map.bossEffects) && map.bossEffects.includes(key);
@@ -3594,7 +3690,8 @@
     function tickBossPoison(map){
       ensureBossRuntimeState(map);
       if(map.bossStatus.poisonTurns<=0) return false;
-      const dmg=Math.max(1,Math.min(35,Math.round(getHeroMaxHp()*0.025)));
+      let dmg=Math.max(1,Math.min(35,Math.round(getHeroMaxHp()*0.025)));
+      if (hasHeroItemEffect('detox_charm')) dmg=Math.max(1,Math.round(dmg*0.5));
       map.bossStatus.poisonTurns--;
       state.heroHp=Math.max(0,state.heroHp-dmg);
       logBattle(`☠️ <b style="color:#a7f3d0">[NHIỄM ĐỘC]</b> Bạn mất <b style="color:var(--green)">${dmg} HP</b>.`);
@@ -3615,7 +3712,8 @@
         notifyBossEffect(map,'enraged','Sát thương phản đòn tăng 25%.');
       }
       if(bossHasEffect(map,'regen')){
-        const heal=Math.max(1,Math.round(map.maxHp*0.02));
+        let heal=Math.max(1,Math.round(map.maxHp*0.02));
+        if(hasHeroItemEffect('life_sapper')) heal=Math.max(1,Math.round(heal*0.5));
         const before=map.hp; map.hp=Math.min(map.maxHp,map.hp+heal);
         if(map.hp>before) logBattle(`💚 <b style="color:#86efac">[HỒI PHỤC]</b> ${map.bossName} hồi <b>${map.hp-before} HP</b>.`);
       }
@@ -3634,12 +3732,14 @@
         map.bossStatus.poisonTurns=Math.max(map.bossStatus.poisonTurns,3);
         notifyBossEffect(map,'poison','Mất HP mỗi lượt trong 3 lượt.');
       }
-      if(bossHasEffect(map,'freeze') && Math.random()<0.12){
+      const freezeChance = 0.12 * (hasHeroItemEffect('fire_heart') ? 0.5 : 1);
+      if(bossHasEffect(map,'freeze') && Math.random()<freezeChance){
         map.bossStatus.freezeHits=Math.max(map.bossStatus.freezeHits,1);
         notifyBossEffect(map,'freeze','Lượt đánh kế tiếp sẽ bị bỏ qua.');
       }
       if(bossHasEffect(map,'counter') && Math.random()<0.18){
         extra=Math.max(1,Math.round(baseDamage*0.35));
+        if(hasHeroItemEffect('counter_breaker')) extra=Math.max(1,Math.round(extra*0.5));
         state.heroHp=Math.max(0,state.heroHp-extra);
         map.bossStatus.lastCounterBonus=extra;
         notifyBossEffect(map,'counter',`Phản thêm ${extra} DMG.`);
@@ -3655,48 +3755,48 @@
         bg: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1000&auto=format&fit=crop&q=80",
         bossName: "Dạ Ma Vương", bossImg: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=400&auto=format&fit=crop&q=60",
         hp: 800, maxHp: 800, armor: 15, magicRes: 10, atk: 35,
-        bossEffects: ['burn','poison'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0}
+        bossEffects: ['burn','poison'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0,itemHitCount:0,soulMilestone:0}
       },
       {
         id: "map_2", title: "Ải 2: Đỉnh Núi Hỏa Long",
         bg: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1000&auto=format&fit=crop&q=80",
         bossName: "Hỏa Long Bạo Chúa", bossImg: "https://images.unsplash.com/photo-1563089145-599997674d42?w=400&auto=format&fit=crop&q=60",
         hp: 1800, maxHp: 1800, armor: 30, magicRes: 25, atk: 65,
-        bossEffects: ['freeze','shield','enraged'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0}
+        bossEffects: ['freeze','shield','enraged'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0,itemHitCount:0,soulMilestone:0}
       }
     ];
 
     const DEFAULT_SHOP_CATALOG = [
       // Hồi phục HP (heal)
-      { id: 'flask_vitality', category: 'heal', name: 'Sinh Mệnh Tinh Thủy', price: 40, img: 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 100 HP cho nhân vật.' },
-      { id: 'crimson_elixir', category: 'heal', name: 'Huyết Mạch Cổ Đan', price: 100, img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 350 HP (hoặc 50% HP tối đa).' },
-      { id: 'phoenix_elixir', category: 'heal', name: 'Thần Dược Phục Sinh', price: 250, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=250&auto=format&fit=crop&q=60', desc: 'Hồi 100% đầy bình Máu và thanh tẩy mọi hiệu ứng bất lợi.' },
-      { id: 'sapling_renewal', category: 'heal', name: 'Hạt Bụi Thần Mộc (30p)', price: 80, img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=250&auto=format&fit=crop&q=60', desc: 'Tự động hồi phục 10 HP sau mỗi đòn đánh vào Boss trong 30 phút.' },
-      { id: 'aegis_blessing', category: 'heal', name: 'Thánh Ca Hộ Thể (2h)', price: 70, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60', desc: 'Sau mỗi nhiệm vụ hoàn thành, tự động hồi lại 50 HP.' },
+      { id: 'flask_vitality', category: 'heal', name: 'Sinh Mệnh Tinh Thủy', price: 50, img: 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 100 HP cho nhân vật.' },
+      { id: 'crimson_elixir', category: 'heal', name: 'Huyết Mạch Cổ Đan', price: 130, img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 350 HP (hoặc 50% HP tối đa).' },
+      { id: 'phoenix_elixir', category: 'heal', name: 'Thần Dược Phục Sinh', price: 360, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=250&auto=format&fit=crop&q=60', desc: 'Hồi 100% đầy bình Máu và thanh tẩy mọi hiệu ứng bất lợi.' },
+      { id: 'sapling_renewal', category: 'heal', name: 'Hạt Bụi Thần Mộc (30p)', price: 110, img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=250&auto=format&fit=crop&q=60', desc: 'Tự động hồi phục 10 HP sau mỗi đòn đánh vào Boss trong 30 phút.' },
+      { id: 'aegis_blessing', category: 'heal', name: 'Thánh Ca Hộ Thể (2h)', price: 100, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60', desc: 'Sau mỗi nhiệm vụ hoàn thành, tự động hồi lại 50 HP.' },
       
       // Bùa chú tác chiến & Miễn nhiễm (buff)
-      { id: 'holy_aegis_shield', category: 'buff', name: 'Khiên Thánh Linh Quang (3 Lượt)', price: 140, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Miễn nhiễm 100% sát thương phản đòn từ Boss trong 3 lượt đánh kế.' },
-      { id: 'void_dew', category: 'buff', name: 'Giọt Sương Hư Không (15p)', price: 160, img: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=250&auto=format&fit=crop&q=60', desc: 'Vào trạng thái Vô Thể trong 15 phút, không kích hoạt phản đòn khi đánh Boss.' },
-      { id: 'vampiric_draught', category: 'buff', name: 'Chiết Xuất Dạ Quỷ (5 Lượt)', price: 90, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Trong 5 lượt đánh kế, chuyển 20% sát thương gây ra thành Máu hồi phục.' },
-      { id: 'iced_coffee', category: 'buff', name: 'Ly Cà Phê Sữa Đá (2h)', price: 60, img: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=250&auto=format&fit=crop&q=60', desc: 'Tăng +20% Sát thương Boss trong 2 giờ.' },
-      { id: 'elixir_overdrive', category: 'buff', name: 'Tinh Chất Thức Thần (3h)', price: 90, img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=250&auto=format&fit=crop&q=60', desc: 'Mỗi khi nộp 1 task, nhận thêm +1 Lượt Xuất Chiêu vào Boss.' },
-      { id: 'eye_discernment', category: 'buff', name: 'Mắt Thần Phá Điểm (5 Lượt)', price: 80, img: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=250&auto=format&fit=crop&q=60', desc: 'Tăng +30% Tỉ lệ Bạo Kích (CRIT) trong 5 lượt đánh kế tiếp.' },
-      { id: 'rune_midas', category: 'buff', name: 'Hoàng Kim Phù Điêu (3 Task)', price: 110, img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250&auto=format&fit=crop&q=60', desc: 'Nhân đôi (x2) Vàng thu hoạch từ 3 nhiệm vụ tiếp theo.' },
-      { id: 'gem_enlightenment', category: 'buff', name: 'Bảo Thạch Khai Minh (3 Task)', price: 110, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=250&auto=format&fit=crop&q=60', desc: 'Nhân đôi (x2) Kinh nghiệm (EXP) nhận được từ 3 nhiệm vụ kế.' },
-      { id: 'chime_resonance', category: 'buff', name: 'Chuông Ngân Hồi Quang', price: 130, img: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=250&auto=format&fit=crop&q=60', desc: 'Giảm 20% Ngưỡng Thủ & Giáp của Boss ở mọi tầng đến 23:59 hôm nay.' },
-      { id: 'shield_item', category: 'buff', name: 'Khiên Streak', price: 90, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Bảo vệ chuỗi ngày nếu lỡ quên làm nhiệm vụ.' },
-      { id: 'gacha_ticket', category: 'gacha', name: '🎟️ Vé Gacha', price: 150, img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=250&auto=format&fit=crop&q=60', desc: 'Một vé quay Gacha. Giá cố định 150 Vàng.' },
+      { id: 'holy_aegis_shield', category: 'buff', name: 'Khiên Thánh Linh Quang (3 Lượt)', price: 180, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Miễn nhiễm 100% sát thương phản đòn từ Boss trong 3 lượt đánh kế.' },
+      { id: 'void_dew', category: 'buff', name: 'Giọt Sương Hư Không (15p)', price: 200, img: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=250&auto=format&fit=crop&q=60', desc: 'Vào trạng thái Vô Thể trong 15 phút, không kích hoạt phản đòn khi đánh Boss.' },
+      { id: 'vampiric_draught', category: 'buff', name: 'Chiết Xuất Dạ Quỷ (5 Lượt)', price: 120, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Trong 5 lượt đánh kế, chuyển 20% sát thương gây ra thành Máu hồi phục.' },
+      { id: 'iced_coffee', category: 'buff', name: 'Ly Cà Phê Sữa Đá (2h)', price: 100, img: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=250&auto=format&fit=crop&q=60', desc: 'Tăng +20% Sát thương Boss trong 2 giờ.' },
+      { id: 'elixir_overdrive', category: 'buff', name: 'Tinh Chất Thức Thần (3h)', price: 170, img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=250&auto=format&fit=crop&q=60', desc: 'Mỗi khi nộp 1 task, nhận thêm +1 Lượt Xuất Chiêu vào Boss.' },
+      { id: 'eye_discernment', category: 'buff', name: 'Mắt Thần Phá Điểm (5 Lượt)', price: 140, img: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=250&auto=format&fit=crop&q=60', desc: 'Tăng +30% Tỉ lệ Bạo Kích (CRIT) trong 5 lượt đánh kế tiếp.' },
+      { id: 'rune_midas', category: 'buff', name: 'Hoàng Kim Phù Điêu (3 Task)', price: 180, img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250&auto=format&fit=crop&q=60', desc: 'Nhân đôi (x2) Vàng thu hoạch từ 3 nhiệm vụ tiếp theo.' },
+      { id: 'gem_enlightenment', category: 'buff', name: 'Bảo Thạch Khai Minh (3 Task)', price: 180, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=250&auto=format&fit=crop&q=60', desc: 'Nhân đôi (x2) Kinh nghiệm (EXP) nhận được từ 3 nhiệm vụ kế.' },
+      { id: 'chime_resonance', category: 'buff', name: 'Chuông Ngân Hồi Quang', price: 220, img: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=250&auto=format&fit=crop&q=60', desc: 'Giảm 20% Ngưỡng Thủ & Giáp của Boss ở mọi tầng đến 23:59 hôm nay.' },
+      { id: 'shield_item', category: 'buff', name: 'Khiên Streak', price: 150, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Bảo vệ chuỗi ngày nếu lỡ quên làm nhiệm vụ.' },
+      { id: 'gacha_ticket', category: 'gacha', name: '🎟️ Vé Gacha', price: 200, img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=250&auto=format&fit=crop&q=60', desc: 'Một vé quay Gacha. Giá cố định 150 Vàng.' },
 
       // Nguyên liệu Thạch Anh bán trong Shop — dùng cùng một phong cách ảnh mặc định, có thể sửa URL từng loại.
-      { id: 'quartz_basic', category: 'quartz', name: 'Thạch Anh Sơ Cấp', price: 60, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.' },
-      { id: 'quartz_pure', category: 'quartz', name: 'Thạch Anh Tinh Khiết', price: 180, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
-      { id: 'quartz_chaos', category: 'quartz', name: 'Thạch Anh Hỗn Độn', price: 420, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.' },
+      { id: 'quartz_basic', category: 'quartz', name: 'Thạch Anh Sơ Cấp', price: 80, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.' },
+      { id: 'quartz_pure', category: 'quartz', name: 'Thạch Anh Tinh Khiết', price: 240, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
+      { id: 'quartz_chaos', category: 'quartz', name: 'Thạch Anh Hỗn Độn', price: 600, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.' },
 
       // Rương báu (chest)
-      { id: 'chest_wood', category: 'chest', name: 'Rương Gỗ', price: 40, img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=250&auto=format&fit=crop&q=60', desc: 'Rương sơ cấp: lượng Vàng/EXP nhỏ, chủ yếu hỗ trợ tiến trình và có cơ hội nhận Thạch Anh.' },
-      { id: 'chest_silver', category: 'chest', name: 'Rương Bạc', price: 120, img: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=250&auto=format&fit=crop&q=60', desc: 'Chứa Vàng/EXP vừa phải, Thạch Anh Sơ Cấp và cơ hội bùa hồi phục.' },
-      { id: 'chest_gold', category: 'chest', name: 'Rương Vàng Hoàng Kim', price: 260, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=250&auto=format&fit=crop&q=60', desc: 'Chắc chắn rơi Thạch Anh Tinh Khiết, kèm Vàng/EXP trung bình và cơ hội vật phẩm hiếm.' },
-      { id: 'chest_diamond', category: 'chest', name: 'Rương Kim Cương Huyền Bí', price: 500, img: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=250&auto=format&fit=crop&q=60', desc: 'Kho báu chứa Thạch Anh Hỗn Độn, Vàng/EXP cao hơn nhưng đã giảm để hạn chế lạm phát.' }
+      { id: 'chest_wood', category: 'chest', name: 'Rương Gỗ', price: 75, img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=250&auto=format&fit=crop&q=60', desc: 'Rương sơ cấp: lượng Vàng/EXP nhỏ, chủ yếu hỗ trợ tiến trình và có cơ hội nhận Thạch Anh.' },
+      { id: 'chest_silver', category: 'chest', name: 'Rương Bạc', price: 220, img: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=250&auto=format&fit=crop&q=60', desc: 'Chứa Vàng/EXP vừa phải, Thạch Anh Sơ Cấp và cơ hội bùa hồi phục.' },
+      { id: 'chest_gold', category: 'chest', name: 'Rương Vàng Hoàng Kim', price: 450, img: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=250&auto=format&fit=crop&q=60', desc: 'Chắc chắn rơi Thạch Anh Tinh Khiết, kèm Vàng/EXP trung bình và cơ hội vật phẩm hiếm.' },
+      { id: 'chest_diamond', category: 'chest', name: 'Rương Kim Cương Huyền Bí', price: 850, img: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=250&auto=format&fit=crop&q=60', desc: 'Kho báu chứa Thạch Anh Hỗn Độn, Vàng/EXP cao hơn nhưng đã giảm để hạn chế lạm phát.' }
     ];
 
     const DEFAULT_STATE = {
@@ -3846,6 +3946,7 @@
     if (typeof state.gachaPity !== 'number') state.gachaPity = 0;
     if (typeof state.gachaTotalPulls !== 'number') state.gachaTotalPulls = 0;
     if (typeof state.gachaCoverUrl !== 'string') state.gachaCoverUrl = '';
+    if (typeof state.shopPriceBalanceVersion !== 'number') state.shopPriceBalanceVersion = 0;
     if (!Array.isArray(state.ownedRunes)) state.ownedRunes = [];
     if (!state.runeCounts || typeof state.runeCounts !== 'object') state.runeCounts = {};
     state.ownedRunes.forEach(k => { state.runeCounts[k] = Math.max(1, Number(state.runeCounts[k]) || 1); });
@@ -3944,6 +4045,88 @@ window.BetterLevelProfile = {
       return totalMaxHp;
     }
 
+    /* ============================================================
+       HIỆU ỨNG TRANG BỊ - RUNTIME NHẸ
+       ============================================================ */
+    function ensureItemEffectRuntime() {
+      if (!state.itemEffectRuntime || typeof state.itemEffectRuntime !== 'object') state.itemEffectRuntime = {};
+      const r = state.itemEffectRuntime;
+      if (!Number.isFinite(r.prophecyTurns)) r.prophecyTurns = 0;
+      if (!Number.isFinite(r.prophecyIndex)) r.prophecyIndex = 0;
+      if (!Number.isFinite(r.darkHunterSafeTurns)) r.darkHunterSafeTurns = 0;
+      if (r.darkHunterReady !== true) r.darkHunterReady = false;
+      if (r.mirrorNext !== true) r.mirrorNext = false;
+      return r;
+    }
+
+    function hasHeroItemEffect(key) {
+      for (const slot in (state.equipped || {})) {
+        const item = state.equipped[slot];
+        if (item && item.special === key) return true;
+      }
+      return false;
+    }
+
+    function markDarkHunterSafe(stats) {
+      if (!stats?.effects?.includes('shadow_hunter')) return;
+      const r = ensureItemEffectRuntime();
+      r.darkHunterSafeTurns = Math.min(2, (r.darkHunterSafeTurns || 0) + 1);
+      if (r.darkHunterSafeTurns >= 2) r.darkHunterReady = true;
+    }
+
+    function resetDarkHunter(stats) {
+      if (!stats?.effects?.includes('shadow_hunter')) return;
+      const r = ensureItemEffectRuntime();
+      r.darkHunterSafeTurns = 0;
+      r.darkHunterReady = false;
+    }
+
+    function triggerProphecyIfReady(map, stats) {
+      const r = ensureItemEffectRuntime();
+      if (!stats.effects.includes('prophet_eye')) {
+        r.prophecyTurns = 0;
+        return;
+      }
+      r.prophecyTurns++;
+      if (r.prophecyTurns < 3) return;
+      r.prophecyTurns = 0;
+      if (!map || !Array.isArray(map.bossEffects) || !map.bossEffects.length) return;
+      const key = map.bossEffects[r.prophecyIndex % map.bossEffects.length];
+      r.prophecyIndex = (r.prophecyIndex + 1) % map.bossEffects.length;
+      const effect = BOSS_EFFECT_DATA[key];
+      if (!effect) return;
+      showSiteToast(`👁️ Tiên Tri: ${map.bossName} sắp kích hoạt ${effect.icon} ${effect.name}.`,'info','👁️',4200);
+      logBattle(`👁️ <b style="color:#a5b4fc">[TIÊN TRI]</b> ${map.bossName} sắp kích hoạt <b>${effect.name}</b>.`);
+    }
+
+    function processBossHitEquipmentBonuses(map, stats, previousHp, currentHp) {
+      ensureBossRuntimeState(map);
+      const s = map.bossStatus;
+      const hpLossRatio = map.maxHp > 0 ? Math.max(0, (previousHp - currentHp) / map.maxHp) : 0;
+      if (stats.effects.includes('recycle')) {
+        s.itemHitCount = (s.itemHitCount || 0) + 1;
+        if (s.itemHitCount % 5 === 0) {
+          state.bossTokens = (state.bossTokens || 0) + 1;
+          logBattle(`♻️ <b style="color:#67e8f9">[HOÀN LƯU]</b> Đánh trúng ${map.bossName} lần thứ ${s.itemHitCount} → +1 Boss Token.`);
+        }
+      }
+      if (stats.effects.includes('soul_reaper') && map.maxHp > 0 && currentHp < previousHp) {
+        const previousMilestone = Number.isFinite(s.soulMilestone) ? s.soulMilestone : Math.floor(((map.maxHp - previousHp) / map.maxHp) * 10);
+        const currentMilestone = Math.floor(((map.maxHp - currentHp) / map.maxHp) * 10 + 1e-9);
+        if (currentMilestone > previousMilestone) {
+          for (let i = previousMilestone + 1; i <= currentMilestone; i++) {
+            if (Math.random() < 0.01) {
+              state.bossTokens = (state.bossTokens || 0) + 1;
+              logBattle(`💀 <b style="color:#fda4af">[ĐOẠT HỒN]</b> Boss mất thêm 10% HP → +1 Boss Token miễn phí.`);
+            }
+          }
+        }
+        s.soulMilestone = currentMilestone;
+      }
+      if (stats.effects.includes('prophet_eye')) triggerProphecyIfReady(map, stats);
+      return hpLossRatio;
+    }
+
     /* Tính Chỉ Số Chiến Đấu (ATK, DEF, CRIT, EVA & Buffs) */
     function getHeroStats() {
       let atk = 20 + (state.level * 3);
@@ -4007,6 +4190,15 @@ window.BetterLevelProfile = {
       if (effects.includes('boss_slayer')) bossDmgPercent += 12;
       if (effects.includes('bastion')) damageReductionPercent += 15;
       if (effects.includes('armor_breaker')) bossArmorPenPercent += 15;
+
+      // Hiệu ứng trang bị mới
+      if (effects.includes('stone_skin')) {
+        def = Math.round(def * 1.20);
+        eva -= 5;
+      }
+      if (effects.includes('money_power')) {
+        atk += Math.min(100, Math.floor((state.coins || 0) / 500) * 2);
+      }
 
       if (effects.includes('last_stand')) {
         const lostHpRatio = Math.max(0, (maxHp - state.heroHp) / maxHp);
@@ -4778,9 +4970,12 @@ window.BetterLevelProfile = {
       const map=getCurrentMap();
       if(map.hp<=0) return alert("Boss của ải này đã bị tiêu diệt! Hãy chuyển ải hoặc chỉnh sửa trong Cài đặt.");
       ensureBossRuntimeState(map);
+      const bossTokensBefore = state.bossTokens || 0;
       state.bossTokens--; state.hitCountTotal=(state.hitCountTotal||0)+1; state.dailyHitsCount=(state.dailyHitsCount||0)+1;
       beginBattleHistoryEntry(state.hitCountTotal);
-      const stats=getHeroStats(); triggerScreenShake();
+      const stats=getHeroStats();
+      const itemRuntime=ensureItemEffectRuntime();
+      triggerScreenShake();
       if(tickBossPoison(map)){ saveState(); return; }
       if(map.bossStatus.freezeHits>0){
         map.bossStatus.freezeHits--;
@@ -4801,7 +4996,8 @@ window.BetterLevelProfile = {
       const equippedWeapon=state.equipped.weapon; const dmgType=equippedWeapon?equippedWeapon.dmgType:'physical';
       if(dmgType==='pure') bossArmor=0;
 
-      if(bossHasEffect(map,'dodge') && Math.random()<0.12){
+      const bossDodgeChance = 0.12 * (stats.effects.includes('shadow_eye') ? 0.70 : 1);
+      if(bossHasEffect(map,'dodge') && Math.random()<bossDodgeChance){
         logBattle(`🌫️ <b style="color:#cbd5e1">[NÉ TRÁNH]</b> ${map.bossName} né hoàn toàn đòn tấn công!`);
         notifyBossEffect(map,'dodge');
         maybeTriggerBossPostTurnEffects(map);
@@ -4811,6 +5007,26 @@ window.BetterLevelProfile = {
       let baseDmg=stats.atk;
       let isCrit=Math.random()*100<stats.crit;
       if(isCrit){ baseDmg=Math.round(baseDmg*(stats.critDmg/100)); if(stats.effects.includes('mending_strike')) healHero(Math.round(getHeroMaxHp()*0.05)); if(hasRune('KAUNAN')){map.hp=Math.max(0,map.hp-Math.round((map.hp||0)*0.03));logBattle(`🔥 <b style='color:var(--red)'>[KAUNAN]</b> Đốt cháy thêm 3% HP hiện tại của Boss!`);} }
+
+      let lotteryOutcome='none';
+      if(stats.effects.includes('lottery_player')){
+        const roll=Math.random()*100;
+        if(roll<5){
+          const prize=Math.floor(Math.random()*3);
+          lotteryOutcome=['triple','heal','gold'][prize];
+          if(lotteryOutcome==='triple') logBattle(`🎲 <b style="color:var(--gold)">[XỔ SỐ]</b> JACKPOT — đòn này x3 DMG!`);
+        } else if(roll<8){
+          lotteryOutcome='unlucky';
+          logBattle(`💀 <b style="color:var(--red)">[XUI XẺO]</b> Đòn này chỉ gây 50% DMG.`);
+        }
+      }
+
+      if(stats.effects.includes('destiny') && bossTokensBefore===1){
+        baseDmg=Math.round(baseDmg*1.4);
+        logBattle(`🕰️ <b style="color:#fde68a">[ĐỊNH MỆNH]</b> Còn đúng 1 Boss Token → +40% DMG.`);
+      }
+      if(lotteryOutcome==='triple') baseDmg=Math.round(baseDmg*3);
+      if(lotteryOutcome==='unlucky') baseDmg=Math.max(1,Math.round(baseDmg*0.5));
       if(stats.effects.includes('first_strike') && !state.firstStrikeUsed){baseDmg*=2;state.firstStrikeUsed=true;}
       if(hasRune('TIWAZ') && !state.runeFirstBossHitUsed){baseDmg=Math.round(baseDmg*1.5);state.runeFirstBossHitUsed=true;}
       if(state.activeRuneState && state.activeRuneState.evasionBoostNext){baseDmg=Math.round(baseDmg*1.25);state.activeRuneState.evasionBoostNext=false;logBattle(`🌀 <b style='color:var(--cyan)'>[EHWAZ]</b> Đòn kế tiếp +25% DMG!`);}
@@ -4821,40 +5037,88 @@ window.BetterLevelProfile = {
       let finalDmg=Math.max(5,Math.round(baseDmg)-bossArmor);
       if(stats.bossDmgPercent>0) finalDmg=Math.round(finalDmg*(1+stats.bossDmgPercent/100));
       if(stats.effects.includes('executioner') && map.maxHp>0 && (map.hp/map.maxHp)<=0.20) finalDmg=Math.round(finalDmg*1.35);
+      if(stats.effects.includes('shadow_hunter') && itemRuntime.darkHunterReady){
+        finalDmg=Math.round(finalDmg*2);
+        itemRuntime.darkHunterReady=false;
+        itemRuntime.darkHunterSafeTurns=0;
+        logBattle(`🌑 <b style="color:#c4b5fd">[KẺ SĂN BÓNG TỐI]</b> Đòn tấn công x2 DMG!`);
+      }
       if(map.bossStatus.shieldTurns>0){
         finalDmg=Math.round(finalDmg*0.65);
+        if(stats.effects.includes('shield_breaker')) finalDmg=Math.round(finalDmg*1.20);
         map.bossStatus.shieldTurns=Math.max(0,map.bossStatus.shieldTurns-1);
         logBattle(`🛡️ <b style="color:#93c5fd">[KHIÊN BẢO VỆ]</b> Sát thương bị giảm 35%.`);
       }
       if(state.activeBuffs && state.activeBuffs.icedCoffeeExpires>Date.now()) finalDmg=Math.round(finalDmg*1.2);
+      const previousBossHp=map.hp;
+      if(itemRuntime.mirrorNext){
+        const mirrorBonus=Math.max(1,Math.round(finalDmg*0.20));
+        finalDmg+=mirrorBonus;
+        itemRuntime.mirrorNext=false;
+        logBattle(`🪞 <b style="color:#c4b5fd">[GƯƠNG PHẢN CHIẾU]</b> Sao chép thêm ${mirrorBonus} DMG!`);
+      }
       map.hp=Math.max(0,map.hp-finalDmg);
+      processBossHitEquipmentBonuses(map,stats,previousBossHp,map.hp);
       const bossImgElem=document.getElementById('bossImgDisplay'); showFloatingCombatText(bossImgElem,finalDmg,isCrit?'crit':'normal');
       if(isCrit){playSfx('crit');logBattle(`🔥 <b style='color:#f43f5e'>CHÍ MẠNG!</b> Bạn gây <b style='color:#f43f5e'>${finalDmg}</b> lên Boss.`);} else {playSfx('hit');logBattle(`⚔️ Bạn tấn công gây <b>${finalDmg}</b> lên Boss.`);}
+
+      if(stats.effects.includes('berserk_sword') && map.hp>0 && Math.random()<0.30){
+        const extraStrike=Math.max(1,Math.round(finalDmg*0.60));
+        const hpBeforeExtra=map.hp;
+        map.hp=Math.max(0,map.hp-extraStrike);
+        processBossHitEquipmentBonuses(map,stats,hpBeforeExtra,map.hp);
+        logBattle(`⚡ <b style="color:#fbbf24">[CUỒNG KIẾM]</b> Đánh thêm ${extraStrike} DMG.`);
+      }
+
       let lifeStealPercent=0;
       if(stats.effects.includes('vampiric_edge')) lifeStealPercent+=0.15;
       if(hasRune('NAUDIZ') && (state.heroHp/getHeroMaxHp())<0.3) lifeStealPercent+=0.15;
       if(state.activeBuffs && state.activeBuffs.vampiricDraughtHits>0){lifeStealPercent+=0.20;state.activeBuffs.vampiricDraughtHits--;}
       if(lifeStealPercent>0) healHero(Math.round(finalDmg*lifeStealPercent));
+      if(lotteryOutcome==='heal') {
+        const heal=Math.max(1,Math.round(getHeroMaxHp()*0.20));
+        healHero(heal);
+        logBattle(`🎲 <b style="color:#86efac">[XỔ SỐ]</b> May mắn — hồi ${heal} HP.`);
+      } else if(lotteryOutcome==='gold') {
+        state.coins=(state.coins||0)+50;
+        logBattle(`🎲 <b style="color:#fbbf24">[XỔ SỐ]</b> May mắn — +50 Vàng.`);
+      }
       if(state.activeBuffs && state.activeBuffs.saplingRenewalExpires>Date.now()) healHero(10);
       if(state.activeBuffs && state.activeBuffs.eyeDiscernmentHits>0) state.activeBuffs.eyeDiscernmentHits--;
 
       if(map.hp>0){
         const heroBarElem=document.getElementById('heroHpBar');
-        if(hasRune('HAGALAZ') && !state.hagalazUsedDate){ state.hagalazUsedDate=todayStr; logBattle(`ᚺ <b style='color:var(--cyan)'>[HAGALAZ]</b> Boss bị Tê Liệt — không phản đòn ở đòn đầu ngày.`); saveState(); return; }
-        if(state.activeBuffs && state.activeBuffs.voidDewExpires>Date.now()){logBattle(`💧 <b style='color:var(--cyan)'>[Vô Thể]</b> Bạn không kích hoạt phản đòn của Boss!`);saveState();return;}
-        if(state.activeBuffs && state.activeBuffs.holyAegisHits>0){state.activeBuffs.holyAegisHits--;playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`🛡️ <b style='color:var(--gold)'>[Khiên Thánh Linh Quang]</b> Triệt tiêu hoàn toàn phản đòn!`);saveState();return;}
-        if(state.hasPhoenixShield){state.hasPhoenixShield=false;playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`🪶 <b style='color:var(--gold)'>[Khiên Phượng Hoàng]</b> Đã chặn đòn đánh kế tiếp!`);saveState();return;}
+        if(hasRune('HAGALAZ') && !state.hagalazUsedDate){ state.hagalazUsedDate=todayStr; markDarkHunterSafe(stats); logBattle(`ᚺ <b style='color:var(--cyan)'>[HAGALAZ]</b> Boss bị Tê Liệt — không phản đòn ở đòn đầu ngày.`); saveState(); return; }
+        if(state.activeBuffs && state.activeBuffs.voidDewExpires>Date.now()){markDarkHunterSafe(stats);logBattle(`💧 <b style='color:var(--cyan)'>[Vô Thể]</b> Bạn không kích hoạt phản đòn của Boss!`);saveState();return;}
+        if(state.activeBuffs && state.activeBuffs.holyAegisHits>0){state.activeBuffs.holyAegisHits--;markDarkHunterSafe(stats);playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`🛡️ <b style='color:var(--gold)'>[Khiên Thánh Linh Quang]</b> Triệt tiêu hoàn toàn phản đòn!`);saveState();return;}
+        if(state.hasPhoenixShield){state.hasPhoenixShield=false;markDarkHunterSafe(stats);playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`🪶 <b style='color:var(--gold)'>[Khiên Phượng Hoàng]</b> Đã chặn đòn đánh kế tiếp!`);saveState();return;}
+        if(stats.effects.includes('trickster') && Math.random()<0.12){
+          markDarkHunterSafe(stats);
+          playSfx('dodge');
+          showFloatingCombatText(heroBarElem,0,'dodge');
+          logBattle(`🎭 <b style="color:#f0abfc">[KẺ ĐÁNH LỪA]</b> Hủy hoàn toàn phản đòn của Boss.`);
+          saveState();
+          return;
+        }
         const rollEva=Math.random()*100;
         if(rollEva<=stats.eva){
           if(hasRune('EHWAZ')) state.activeRuneState.evasionBoostNext=true;
           if(hasRuneCombo('EHWAZ','THURISAZ')) { map.hp=Math.max(0,map.hp-stats.def); logBattle(`🧿 <b style='color:var(--accent)'>[PHẢN TRẮC THÂN PHÁP]</b> Phản ${stats.def} DMG vào Boss.`); }
-          playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`💨 <b style='color:var(--cyan)'>NÉ ĐÒN!</b> Bạn đã né phản kích từ Boss!`);saveState();return;
+          if(stats.effects.includes('mirror_reflect')) itemRuntime.mirrorNext=true;
+          markDarkHunterSafe(stats);
+          playSfx('dodge');showFloatingCombatText(heroBarElem,0,'dodge');logBattle(`💨 <b style='color:var(--cyan)'>NÉ ĐÒN!</b> Bạn đã né phản kích từ Boss!${stats.effects.includes('mirror_reflect')?' Gương Phản Chiếu đã tích năng lượng.':''}`);saveState();return;
         }
         let bossAttack=map.atk||30;
-        if(map.bossStatus.enragedActivated) bossAttack=Math.round(bossAttack*1.25);
+        if(map.bossStatus.enragedActivated){
+          const enrageBonus=stats.effects.includes('enrage_breaker') ? 0.125 : 0.25;
+          bossAttack=Math.round(bossAttack*(1+enrageBonus));
+        }
         if(stats.effects.includes('aegis_ward') && state.dailyHitsCount<=3) bossAttack=Math.round(bossAttack*0.5);
         let dmgToHero=Math.max(0,bossAttack-effectiveDef);
         if(dmgToHero>0 && stats.damageReductionPercent>0) dmgToHero=Math.round(dmgToHero*(1-stats.damageReductionPercent/100));
+        if(dmgToHero===0){
+          resetDarkHunter(stats);
+        }
         if(dmgToHero===0 && stats.effects.includes('shock_absorb')){state.coins+=10;logBattle(`🛡️ <b style='color:var(--gold)'>[Hấp Thụ Chấn Động]</b> +10 Vàng.`);}
         if(stats.effects.includes('thorn_mail') && stats.def>0){map.hp=Math.max(0,map.hp-stats.def);logBattle(`🌵 <b style='color:var(--green)'>[Giáp Gai]</b> Phản ${stats.def} DMG vào Boss!`);}
         if(stats.effects.includes('thorn_mail') && hasRune('THURISAZ')) dmgToHero=Math.round(dmgToHero*0.9);
@@ -4863,7 +5127,14 @@ window.BetterLevelProfile = {
           const potentialHp=state.heroHp-dmgToHero;
           if(potentialHp<=0 && stats.effects.includes('phoenix_feather') && state.lastPhoenixReviveDate!==todayStr){state.heroHp=1;state.lastPhoenixReviveDate=todayStr;state.hasPhoenixShield=true;playSfx('heal');logBattle(`🪶 <b style='color:#f43f5e'>[LÔNG VŨ PHƯỢNG HOÀNG]</b> Miễn tử!`);saveState();return;}
           if(potentialHp<=0 && hasRune('EIHWAZ') && state.lastRuneReviveDate!==todayStr){state.heroHp=Math.min(getHeroMaxHp(),1+Math.round(getHeroMaxHp()*0.20));state.lastRuneReviveDate=todayStr;playSfx('heal');logBattle(`ᛇ <b style='color:#f43f5e'>[EIHWAZ]</b> Giữ 1 HP và hồi 20% Max HP!`);saveState();return;}
-          state.heroHp=Math.max(0,potentialHp);playSfx('boss_hit');showFloatingCombatText(heroBarElem,dmgToHero,'normal');logBattle(`💥 Boss phản đòn! Bạn mất <b style='color:var(--red)'>${dmgToHero} HP</b>.`);
+          state.heroHp=Math.max(0,potentialHp);
+          resetDarkHunter(stats);
+          playSfx('boss_hit');showFloatingCombatText(heroBarElem,dmgToHero,'normal');logBattle(`💥 Boss phản đòn! Bạn mất <b style='color:var(--red)'>${dmgToHero} HP</b>.`);
+          if(stats.effects.includes('reflection') && Math.random()<0.15){
+            const reflect=Math.max(1,Math.round(dmgToHero*0.20));
+            map.hp=Math.max(0,map.hp-reflect);
+            logBattle(`🔄 <b style="color:#67e8f9">[PHẢN XẠ]</b> Phản lại ${reflect} DMG vào Boss.`);
+          }
           if(stats.effects.includes('second_wind') && state.heroHp>0 && (state.heroHp/getHeroMaxHp())<0.35){
             const heal=Math.max(1,Math.round(getHeroMaxHp()*0.04));
             state.heroHp=Math.min(getHeroMaxHp(),state.heroHp+heal);
@@ -4909,7 +5180,7 @@ window.BetterLevelProfile = {
       const bonusHp = parseInt(document.getElementById('forgeBonusHp').value) || 0;
       const bonusHpPercent = parseInt(document.getElementById('forgeBonusHpPercent').value) || 0;
       const crit = parseInt(document.getElementById('forgeCrit').value) || 0;
-      const price = parseInt(document.getElementById('forgePrice').value) || 120;
+      const requestedPrice = parseInt(document.getElementById('forgePrice').value) || 300;
       const special = document.getElementById('forgeSpecialEffect').value;
       const critDmgBonus = 0;
       const bossDmgPercent = 0;
@@ -4920,6 +5191,9 @@ window.BetterLevelProfile = {
 
       if (!name) return alert("Vui lòng nhập tên trang bị!");
 
+      const draftGear = {name,slot,rarity,dmgType,atk,def,bonusHp,bonusHpPercent,crit,special};
+      const balancedPrice = getBalancedEquipmentPrice(draftGear);
+      const price = Math.max(Math.round(balancedPrice*0.75), Math.min(Math.round(balancedPrice*1.35), requestedPrice));
       const newGear = {
         id: Date.now(), name, slot, rarity, dmgType, atk, def, bonusHp, bonusHpPercent, crit, price, special,
         critDmgBonus, bossDmgPercent, damageReductionPercent, bossArmorPenPercent, img, desc
@@ -4927,7 +5201,7 @@ window.BetterLevelProfile = {
 
       state.shopEquipment.push(newGear);
       playSfx('buy');
-      alert(`🔨 Rèn thành công "${name}"! Trang bị đã được NIÊM YẾT CỐ ĐỊNH LÊN CỬA HÀNG.`);
+      alert(`🔨 Rèn thành công "${name}"! Giá niêm yết cân bằng: ${price} 🪙. Trang bị đã được NIÊM YẾT CỐ ĐỊNH LÊN CỬA HÀNG.`);
       document.getElementById('forgeName').value = "";
       saveState();
     }
@@ -5118,24 +5392,73 @@ window.BetterLevelProfile = {
       {key:'legendary', name:'Legendary', glyph:'🟡', rate:4, color:'var(--rarity-legendary)'},
       {key:'rune', name:'Rune', glyph:'🔴', rate:0.5, color:'var(--rarity-mythic)'}
     ];
+    function emitRewardParticles(panel,type='reward',count=10){
+      if(!panel) return;
+      const glyphs=type==='gacha'?['✦','✧','✺','✹','◇','◈']:['🪙','✦','✧','•'];
+      for(let i=0;i<count;i++){
+        const el=document.createElement('span');
+        el.className=type==='gacha'?'reward-magic-particle':'reward-coin-particle';
+        el.textContent=glyphs[Math.floor(Math.random()*glyphs.length)];
+        el.style.setProperty('--dx',`${Math.round((Math.random()-.5)*340)}px`);
+        el.style.setProperty('--dy',`${Math.round(-70-Math.random()*220)}px`);
+        el.style.setProperty('--rot',`${Math.round((Math.random()-.5)*220)}deg`);
+        el.style.marginLeft=`${Math.round((Math.random()-.5)*40)}px`;
+        el.style.marginTop=`${Math.round((Math.random()-.5)*30)}px`;
+        el.style.animationDelay=`${Math.random()*0.18}s`;
+        panel.appendChild(el);
+        setTimeout(()=>el.remove(),1500);
+      }
+    }
+
+    function gachaRevealSound(rarity){
+      const key=String(rarity||'').toLowerCase();
+      const sound=key==='rune'?'gacha_reveal_rune':key==='legendary'?'gacha_reveal_legendary':key==='epic'?'gacha_reveal_epic':key==='rare'?'gacha_reveal_rare':'gacha_reveal_common';
+      setTimeout(()=>playSfx(sound),420);
+    }
+
     function showRewardPanel(title,desc,icon='🎁',rarity='REWARD',rows=[],imageUrl=''){
       const panel=document.getElementById('rewardBackdrop'); if(!panel) return;
+      const safeRows=Array.isArray(rows)?rows:[];
+      const resolvedImage=imageUrl || safeRows.find(x=>x&&x.image)?.image || getRewardImageByName(title.replace(/^.*?\s/,'').trim()) || '';
       document.getElementById('rewardTitle').innerText=title;
       const glyph=document.getElementById('rewardIconGlyph');
       const img=document.getElementById('rewardImage');
-      if(glyph){ glyph.innerText=icon || '🎁'; glyph.style.display=imageUrl?'none':'flex'; }
+      const rewardNameEl=document.getElementById('rewardName');
+      if(glyph){ glyph.innerText=icon || '🎁'; glyph.style.display=resolvedImage?'none':'flex'; }
       if(img){
-        if(imageUrl){
-          img.src=imageUrl; img.style.display='block';
+        if(resolvedImage){
+          img.src=resolvedImage; img.style.display='block';
           img.onerror=()=>{img.style.display='none';if(glyph){glyph.style.display='flex';}};
         } else { img.removeAttribute('src'); img.style.display='none'; }
       }
-      document.getElementById('rewardName').innerText=title;
+      if(rewardNameEl){ rewardNameEl.innerText=title; rewardNameEl.classList.remove('reward-name-pop'); }
       document.getElementById('rewardDesc').innerText=desc||'';
       const r=document.getElementById('rewardRarity'); r.innerText=rarity; r.style.color=rarity==='LEGENDARY'||rarity==='RUNE'?'var(--gold)':rarity==='EPIC'?'var(--rarity-epic)':rarity==='RARE'?'var(--rarity-rare)':'var(--rarity-common)';
-      document.getElementById('rewardList').innerHTML=(rows||[]).map(x=>`<div class="reward-row">${x.image?`<img src="${escapeHtml(x.image)}" class="reward-row-image" alt="">`:''}<span>${escapeHtml(x.icon||'🎁')} ${escapeHtml(x.label||'Phần thưởng')}</span><b style="color:var(--gold);">${escapeHtml(x.value||'')}</b></div>`).join('');
+      document.getElementById('rewardList').innerHTML=safeRows.map(x=>{
+        const rowImage=x.image || getRewardImageByName(x.label||'');
+        return `<div class="reward-row">${rowImage?`<img src="${escapeHtml(rowImage)}" class="reward-row-image" alt="">`:''}<span>${rowImage?'':escapeHtml(x.icon||'🎁')} ${escapeHtml(x.label||'Phần thưởng')}</span><b style="color:var(--gold);">${escapeHtml(x.value||'')}</b></div>`;
+      }).join('');
+      const isGacha=/gacha/i.test(title);
+      const isChest=/rương|chest/i.test(title);
+      panel.classList.remove('reward-reveal','gacha-summon','chest-reveal');
       panel.style.display='flex';
+      void panel.offsetWidth;
+      panel.classList.add('reward-reveal');
+      if(isGacha){
+        panel.classList.add('gacha-summon');
+        if(rewardNameEl){ void rewardNameEl.offsetWidth; rewardNameEl.classList.add('reward-name-pop'); }
+        emitRewardParticles(panel,'gacha',16);
+        gachaRevealSound(rarity);
+      } else if(isChest){
+        panel.classList.add('chest-reveal');
+        emitRewardParticles(panel,'chest',14);
+        setTimeout(()=>playSfx('chest_reveal'),320);
+      } else {
+        playSfx('reward');
+      }
+      setTimeout(()=>panel.classList.remove('reward-reveal','gacha-summon','chest-reveal'),2300);
     }
+
     function closeRewardPanel(){const p=document.getElementById('rewardBackdrop');if(p)p.style.display='none';playSfx('click');}
     function handleRewardBackdrop(e){if(e.target===e.currentTarget)closeRewardPanel();}
 
@@ -5211,10 +5534,17 @@ window.BetterLevelProfile = {
     }
     function getRewardImageByName(name){
       if(!name) return '';
-      const hit=(state.shopCatalog||[]).find(x=>x.name===name || name.includes(x.name));
+      const raw=String(name).trim();
+      const hit=(state.shopCatalog||[]).find(x=>x.name===raw || raw.includes(x.name) || x.name.includes(raw));
       if(hit&&hit.img) return hit.img;
-      const eq=(state.equipmentInventory||[]).find(x=>x.name===name);
+      const eq=[...(state.equipmentInventory||[]),...(state.shopEquipment||[])].find(x=>x.name===raw || raw.includes(x.name) || x.name.includes(raw));
       if(eq&&eq.img) return eq.img;
+      const runeKey=Object.keys(RUNE_DATA||{}).find(k=>raw.includes(k) || raw.includes(RUNE_DATA[k]?.name||''));
+      if(runeKey){
+        const r=RUNE_DATA[runeKey];
+        const svg=`<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"420\" height=\"420\" viewBox=\"0 0 420 420\"><defs><radialGradient id=\"g\"><stop offset=\"0\" stop-color=\"#8b5cf6\"/><stop offset=\"1\" stop-color=\"#111827\"/></radialGradient></defs><rect width=\"420\" height=\"420\" rx=\"42\" fill=\"#0b1020\"/><circle cx=\"210\" cy=\"210\" r=160 fill=\"url(#g)\" stroke=\"#c4b5fd\" stroke-opacity=\".65\" stroke-width=\"6\"/><circle cx=\"210\" cy=\"210\" r=126 fill=\"none\" stroke=\"#fbbf24\" stroke-opacity=\".35\" stroke-width=\"3\" stroke-dasharray=\"10 12\"/><text x=\"210\" y=\"245\" text-anchor=\"middle\" font-size=\"150\" font-family=\"Georgia,serif\" fill=\"#f8fafc\">${r.glyph}</text></svg>`;
+        return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+      }
       const quartzMap={
         'Thạch Anh Sơ Cấp':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
         'Thạch Anh Tinh Khiết':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
@@ -5226,7 +5556,7 @@ window.BetterLevelProfile = {
     function createGachaEquipment(rarity){
       const slots=['hat','armor','pants','shoes','weapon','costume','item1','item2','item3'], slot=slots[Math.floor(Math.random()*slots.length)];
       const base={common:[18,6,70],rare:[28,10,110],epic:[42,15,180],legendary:[60,22,300],mythic:[78,28,480]}[rarity]||[20,6,80];
-      const id=Date.now()+Math.floor(Math.random()*100000); const item={id,name:`Gacha ${RUNE_DATA?rarity.toUpperCase():rarity} ${Math.floor(Math.random()*900)+100}`,slot,rarity,dmgType:'physical',atk:base[0]+Math.floor(Math.random()*12),def:base[1]+Math.floor(Math.random()*8),bonusHp:base[2]+Math.floor(Math.random()*80),bonusHpPercent:rarity==='mythic'?8:rarity==='legendary'?6:rarity==='epic'?4:2,crit:rarity==='mythic'?8:rarity==='legendary'?6:rarity==='epic'?4:2,price:base[2],special:['none','vampiric_edge','pierce','mending_strike','loot','scholar','critical_edge','boss_slayer','executioner','bastion','armor_breaker','second_wind','treasure_seeker','deadline_master'][Math.floor(Math.random()*14)],img:'https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=250&auto=format&fit=crop&q=60',desc:'Trang bị rơi từ vòng quay Gacha, được tạo ngẫu nhiên theo phẩm chất.'};
+      const id=Date.now()+Math.floor(Math.random()*100000); const item={id,name:`Gacha ${RUNE_DATA?rarity.toUpperCase():rarity} ${Math.floor(Math.random()*900)+100}`,slot,rarity,dmgType:'physical',atk:base[0]+Math.floor(Math.random()*12),def:base[1]+Math.floor(Math.random()*8),bonusHp:base[2]+Math.floor(Math.random()*80),bonusHpPercent:rarity==='mythic'?8:rarity==='legendary'?6:rarity==='epic'?4:2,crit:rarity==='mythic'?8:rarity==='legendary'?6:rarity==='epic'?4:2,price:0,special:['none','vampiric_edge','pierce','mending_strike','loot','scholar','critical_edge','boss_slayer','executioner','bastion','armor_breaker','second_wind','treasure_seeker','deadline_master'][Math.floor(Math.random()*14)],img:'https://images.unsplash.com/photo-1595590424283-b8f17842773f?w=250&auto=format&fit=crop&q=60',desc:'Trang bị rơi từ vòng quay Gacha, được tạo ngẫu nhiên theo phẩm chất.'}; item.price=getBalancedEquipmentPrice(item);
       // Các bonus của 4 effect mới được tính từ effect key khi trang bị.
       // Không ghi trùng vào item để tránh cộng 2 lần.
       state.equipmentInventory.push(item); return item;
@@ -5235,7 +5565,7 @@ window.BetterLevelProfile = {
       resetDailyCycles(); if((state.consumables.gacha_ticket||0)<=0){showSiteToast('Bạn chưa có Vé Gacha. Hãy mua trong Shop với 150 Vàng.','warning','🎟️',3600);return;}
       state.consumables.gacha_ticket--; state.gachaTotalPulls=(state.gachaTotalPulls||0)+1; state.gachaPity=(state.gachaPity||0)+1;
       const forceRune=state.gachaPity>=100; const rarity=rollGachaRarity(forceRune); let rows=[], mainName='', mainIcon=rarity.glyph, mainImage='';
-      playSfx('gacha');
+      playSfx('gacha_start');
       if(rarity.key==='common'){
         const x=Math.floor(Math.random()*3); if(x===0){state.quartz.basic=(state.quartz.basic||0)+1;mainName='Thạch Anh Sơ Cấp';mainIcon='🔹';rows=[{label:'Thạch Anh Sơ Cấp',value:'+1',icon:'🔹'}];} else if(x===1){state.consumables.flask_vitality=(state.consumables.flask_vitality||0)+1;mainName='Sinh Mệnh Tinh Thủy';mainIcon='🧪';rows=[{label:'Sinh Mệnh Tinh Thủy',value:'+1',icon:'🧪'}];} else {let gold=50+Math.floor(Math.random()*51);if(hasRune('FEHU')) gold=Math.round(gold*1.20);state.coins+=gold;mainName='Vàng';mainIcon='🪙';rows=[{label:'Vàng',value:`+${gold}`,icon:'🪙'}];}
       } else if(rarity.key==='rare'){
@@ -5250,7 +5580,7 @@ window.BetterLevelProfile = {
         const pool=Object.keys(RUNE_DATA); const key=pool[Math.floor(Math.random()*pool.length)]; if(!state.ownedRunes.includes(key)) state.ownedRunes.push(key); state.runeCounts[key]=(state.runeCounts[key]||0)+1; state.gachaPity=0; mainName=`${RUNE_DATA[key].glyph} ${key}`; mainIcon=RUNE_DATA[key].glyph; rows=[{label:`${RUNE_DATA[key].glyph} ${RUNE_DATA[key].name}`,value:RUNE_DATA[key].buff,icon:'🔴'}];
       }
       if(!mainImage) mainImage=getRewardImageByName(mainName);
-      if(mainImage && rows[0]) rows[0].image=rows[0].image||mainImage;
+      if(mainImage) rows=rows.map(row=>({...row,image:row.image||mainImage}));
       showRewardPanel(`🎰 Gacha — ${rarity.name}`,`Bạn đã nhận được phần thưởng ${rarity.name}.`,mainIcon,rarity.key.toUpperCase(),rows,mainImage);
       saveState(); renderGacha(); renderRunes();
     }
@@ -5258,17 +5588,156 @@ window.BetterLevelProfile = {
     function resetGachaCover(){state.gachaCoverUrl='';saveState();renderGacha();}
     function renderGacha(){const c=document.getElementById('gachaTicketCount');if(!c)return; c.innerText=state.consumables.gacha_ticket||0;document.getElementById('gachaPityDisplay').innerText=state.gachaPity||0;document.getElementById('gachaTotalPullsDisplay').innerText=state.gachaTotalPulls||0;const inp=document.getElementById('gachaCoverInput');if(inp&&document.activeElement!==inp)inp.value=state.gachaCoverUrl||'';const b=document.getElementById('gachaBanner');if(b){b.style.backgroundImage=state.gachaCoverUrl?`linear-gradient(135deg,rgba(37,99,235,.18),rgba(124,58,237,.18)),url('${state.gachaCoverUrl}')`:'linear-gradient(135deg,rgba(37,99,235,.18),rgba(124,58,237,.2)),linear-gradient(180deg,#101a31,#090f1c)';}}
 
+    const CHEST_LOOT_RULES = {
+      chest_wood:    { itemChance:0.56, equipChance:0.015, ticketChance:0.04, maxItemPrice:180, rarityWeights:{common:85,rare:13,epic:2,legendary:0,mythic:0} },
+      chest_silver:  { itemChance:0.63, equipChance:0.03,  ticketChance:0.06, maxItemPrice:320, rarityWeights:{common:70,rare:24,epic:5,legendary:1,mythic:0} },
+      chest_gold:    { itemChance:0.70, equipChance:0.055, ticketChance:0.09, maxItemPrice:650, rarityWeights:{common:55,rare:30,epic:11,legendary:3,mythic:1} },
+      chest_diamond: { itemChance:0.76, equipChance:0.09,  ticketChance:0.12, maxItemPrice:999999, rarityWeights:{common:45,rare:30,epic:17,legendary:6,mythic:2} }
+    };
+
+    function weightedPick(pool, weightFn){
+      if(!pool?.length) return null;
+      const weighted=pool.map(x=>({x,weight:Math.max(0.0001,Number(weightFn(x))||0)}));
+      const total=weighted.reduce((sum,a)=>sum+a.weight,0);
+      let roll=Math.random()*total;
+      for(const a of weighted){ roll-=a.weight; if(roll<=0) return a.x; }
+      return weighted[weighted.length-1].x;
+    }
+
+    function getBalancedEquipmentPrice(item){
+      const rarity=item?.rarity||'common';
+      const baseByRarity={common:250,rare:600,epic:1350,legendary:2800,mythic:5800};
+      const base=baseByRarity[rarity]||250;
+      const statScore=(Number(item.atk)||0)*3 + (Number(item.def)||0)*3 + (Number(item.bonusHp)||0)*0.55 + (Number(item.bonusHpPercent)||0)*32 + (Number(item.crit)||0)*28;
+      const effectBonus=(item.special&&item.special!=='none')?Math.max(60,Math.round(base*0.12)):0;
+      const suggested=Math.round(base + Math.min(base*0.55,statScore*0.34) + effectBonus);
+      return Math.max(Math.round(base*0.75),Math.min(Math.round(base*1.55),suggested));
+    }
+
+    const CORE_SHOP_PRICE_BALANCE = {
+      flask_vitality:50, crimson_elixir:130, phoenix_elixir:360, sapling_renewal:110, aegis_blessing:100,
+      holy_aegis_shield:180, void_dew:200, vampiric_draught:120, iced_coffee:100, elixir_overdrive:170,
+      eye_discernment:140, rune_midas:180, gem_enlightenment:180, chime_resonance:220, shield_item:150,
+      gacha_ticket:200, quartz_basic:80, quartz_pure:240, quartz_chaos:600,
+      chest_wood:75, chest_silver:220, chest_gold:450, chest_diamond:850
+    };
+
+    normalizeCoreShopPrices();
+
+    function normalizeCoreShopPrices(){
+      if(state.shopPriceBalanceVersion>=1) return;
+      for(const item of (state.shopCatalog||[])){
+        if(Object.prototype.hasOwnProperty.call(CORE_SHOP_PRICE_BALANCE,item.id)) item.price=CORE_SHOP_PRICE_BALANCE[item.id];
+      }
+      for(const gear of (state.shopEquipment||[])){
+        const balanced=getBalancedEquipmentPrice(gear);
+        if(!Number.isFinite(Number(gear.price)) || Number(gear.price)<Math.round(balanced*0.65) || Number(gear.price)>Math.round(balanced*1.65)) gear.price=balanced;
+      }
+      state.shopPriceBalanceVersion=1;
+    }
+
+    function getChestShopItemPool(itemKey){
+      const rule=CHEST_LOOT_RULES[itemKey];
+      if(!rule) return [];
+      return (state.shopCatalog||[]).filter(item=>item && item.category!=='chest' && Number(item.price||0)<=rule.maxItemPrice);
+    }
+
+    function rollChestEquipment(itemKey){
+      const rule=CHEST_LOOT_RULES[itemKey];
+      const pool=(state.shopEquipment||[]).filter(Boolean);
+      if(!rule||!pool.length||Math.random()>rule.equipChance) return null;
+      const weightMap=rule.rarityWeights||{};
+      return weightedPick(pool,item=>{
+        const rarityWeight=Number(weightMap[item.rarity||'common'])||0;
+        const priceWeight=1/Math.max(1,1+((Number(item.price)||getBalancedEquipmentPrice(item))/Math.max(1,getBalancedEquipmentPrice(item))));
+        return rarityWeight*priceWeight;
+      });
+    }
+
+    function grantShopLootItem(item){
+      if(!item) return null;
+      if(item.id==='quartz_basic') state.quartz.basic=(state.quartz.basic||0)+1;
+      else if(item.id==='quartz_pure') state.quartz.pure=(state.quartz.pure||0)+1;
+      else if(item.id==='quartz_chaos') state.quartz.chaos=(state.quartz.chaos||0)+1;
+      else state.consumables[item.id]=(state.consumables[item.id]||0)+1;
+      return item;
+    }
+
+    function rollChestBonus(itemKey){
+      const rule=CHEST_LOOT_RULES[itemKey];
+      if(!rule) return null;
+      const equipment=rollChestEquipment(itemKey);
+      if(equipment){
+        const awarded={...equipment,id:Date.now()+Math.floor(Math.random()*1000000)};
+        state.equipmentInventory.push(awarded);
+        return {type:'equipment',item:awarded};
+      }
+      if(Math.random()<rule.itemChance){
+        const pool=getChestShopItemPool(itemKey);
+        const item=weightedPick(pool,x=>{
+          const p=Number(x.price)||100;
+          return p<=100?5:p<=220?3:p<=450?1.7:0.8;
+        });
+        if(item){grantShopLootItem(item);return {type:'item',item};}
+      }
+      return null;
+    }
+
     function openChestWithPanel(itemKey){
-      const meta=state.shopCatalog.find(x=>x.id===itemKey); const rows=[]; let goldBonus=0,expBonus=0;
+      const meta=state.shopCatalog.find(x=>x.id===itemKey);
+      const rows=[];
+      let goldBonus=0,expBonus=0,highlightImage=meta?.img||'';
       playSfx('chest');
-      if(itemKey==='chest_wood'){goldBonus=15+Math.floor(Math.random()*16);expBonus=10+Math.floor(Math.random()*11);if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}state.coins+=goldBonus;state.exp+=expBonus;rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'});if(Math.random()<0.35){state.quartz.basic=(state.quartz.basic||0)+1;rows.push({label:'Thạch Anh Sơ Cấp',value:'+1',icon:'🔹'});} }
-      if(itemKey==='chest_silver'){goldBonus=45+Math.floor(Math.random()*31);expBonus=35+Math.floor(Math.random()*26);if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}state.coins+=goldBonus;state.exp+=expBonus;state.quartz.basic=(state.quartz.basic||0)+1;rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Sơ Cấp',value:'+1',icon:'🔹'});if(Math.random()<0.2){state.consumables.crimson_elixir=(state.consumables.crimson_elixir||0)+1;rows.push({label:'Huyết Mạch Cổ Đan',value:'+1',icon:'🩸'});} }
-      if(itemKey==='chest_gold'){goldBonus=100+Math.floor(Math.random()*51);expBonus=90+Math.floor(Math.random()*41);if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}state.coins+=goldBonus;state.exp+=expBonus;state.quartz.pure=(state.quartz.pure||0)+1;state.consumables.phoenix_elixir=(state.consumables.phoenix_elixir||0)+1;rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Tinh Khiết',value:'+1',icon:'🔷'},{label:'Thần Dược Phục Sinh',value:'+1',icon:'🌟'});}
-      if(itemKey==='chest_diamond'){goldBonus=250+Math.floor(Math.random()*101);expBonus=200+Math.floor(Math.random()*81);if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}state.coins+=goldBonus;state.exp+=expBonus;state.quartz.chaos=(state.quartz.chaos||0)+1;state.consumables.phoenix_elixir=(state.consumables.phoenix_elixir||0)+1;rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Hỗn Độn',value:'+1',icon:'🔮'},{label:'Thần Dược Phục Sinh',value:'+1',icon:'🌟'});}
-      let ticketChance={chest_wood:0.04,chest_silver:0.07,chest_gold:0.10,chest_diamond:0.12}[itemKey]||0;
-      if (getHeroStats().effects.includes('treasure_seeker')) ticketChance=Math.min(0.50,ticketChance*1.15);
-      if(ticketChance && Math.random()<ticketChance){state.consumables.gacha_ticket=(state.consumables.gacha_ticket||0)+1;rows.push({label:'Vé Gacha',value:'+1',icon:'🎟️'});}
-      showRewardPanel(`📦 ${meta?.name||'Rương Báu'}`,`Rương đã được mở. Tỷ lệ Vé Gacha của rương: ${(ticketChance*100).toFixed(ticketChance<0.1?0:0)}%.`,'📦','REWARD',rows);
+
+      if(itemKey==='chest_wood'){
+        goldBonus=20+Math.floor(Math.random()*21); expBonus=15+Math.floor(Math.random()*16);
+        if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}
+        state.coins+=goldBonus; state.exp+=expBonus;
+        rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'});
+      }
+      if(itemKey==='chest_silver'){
+        goldBonus=60+Math.floor(Math.random()*41); expBonus=45+Math.floor(Math.random()*31);
+        if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}
+        state.coins+=goldBonus; state.exp+=expBonus; state.quartz.basic=(state.quartz.basic||0)+1;
+        rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Sơ Cấp',value:'+1',icon:'🔹'});
+      }
+      if(itemKey==='chest_gold'){
+        goldBonus=130+Math.floor(Math.random()*71); expBonus=110+Math.floor(Math.random()*61);
+        if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}
+        state.coins+=goldBonus; state.exp+=expBonus; state.quartz.pure=(state.quartz.pure||0)+1;
+        rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Tinh Khiết',value:'+1',icon:'🔷'});
+      }
+      if(itemKey==='chest_diamond'){
+        goldBonus=300+Math.floor(Math.random()*151); expBonus=250+Math.floor(Math.random()*101);
+        if(hasRune('FEHU')){goldBonus=Math.round(goldBonus*1.20);expBonus=Math.round(expBonus*1.15);}
+        state.coins+=goldBonus; state.exp+=expBonus; state.quartz.chaos=(state.quartz.chaos||0)+1;
+        rows.push({label:'Vàng',value:`+${goldBonus}`,icon:'🪙'},{label:'EXP',value:`+${expBonus}`,icon:'⭐'},{label:'Thạch Anh Hỗn Độn',value:'+1',icon:'🔮'});
+      }
+
+      const bonus=rollChestBonus(itemKey);
+      if(bonus?.item){
+        const b=bonus.item;
+        highlightImage=b.img||highlightImage;
+        if(bonus.type==='equipment'){
+          const rarity=RARITY_INFO[b.rarity||'common']?.name||'Thường';
+          rows.push({label:`⚔️ ${b.name} [${rarity}]`,value:'+1',icon:'⚔️',image:b.img});
+        }else{
+          rows.push({label:b.name,value:'+1',icon:b.category==='gacha'?'🎟️':'🎁',image:b.img});
+        }
+      }
+
+      let ticketChance=CHEST_LOOT_RULES[itemKey]?.ticketChance||0;
+      if(getHeroStats().effects.includes('treasure_seeker')) ticketChance=Math.min(0.50,ticketChance*1.15);
+      if(ticketChance && Math.random()<ticketChance){
+        state.consumables.gacha_ticket=(state.consumables.gacha_ticket||0)+1;
+        const ticketMeta=state.shopCatalog.find(x=>x.id==='gacha_ticket');
+        rows.push({label:'Vé Gacha',value:'+1',icon:'🎟️',image:ticketMeta?.img||''});
+      }
+
+      const rewardMeta=bonus?.item;
+      const bonusText=rewardMeta?` Có thêm ${bonus.type==='equipment'?'trang bị':'vật phẩm'} từ Shop.`:' Không trúng vật phẩm phụ.';
+      const equipChance=Math.round((CHEST_LOOT_RULES[itemKey]?.equipChance||0)*100);
+      showRewardPanel(`📦 ${meta?.name||'Rương Báu'}`,`Rương đã mở.${bonusText} Tỷ lệ trang bị của rương này khoảng ${equipChance}%.`,'📦','REWARD',rows,highlightImage);
     }
 
     function buyConsumable(itemKey) {
@@ -5377,7 +5846,9 @@ window.BetterLevelProfile = {
       const item = state.shopCatalog.find(x => x.id === id);
       if (!item) return;
       item.name = document.getElementById('editShopName').value.trim();
-      item.price = parseInt(document.getElementById('editShopPrice').value) || 10;
+      const requested = parseInt(document.getElementById('editShopPrice').value) || 10;
+      const balanced = CORE_SHOP_PRICE_BALANCE[item.id] || Math.max(10, Number(item.price)||10);
+      item.price = Math.max(Math.round(balanced*0.60), Math.min(Math.round(balanced*1.80), requested));
       item.img = document.getElementById('editShopImg').value.trim();
       item.desc = document.getElementById('editShopDesc').value.trim();
       closeEditShopModal();
@@ -5466,7 +5937,7 @@ window.BetterLevelProfile = {
         bossName: "Boss Mới",
         bossImg: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=400&auto=format&fit=crop&q=60",
          hp: 1500, maxHp: 1500, armor: 25, magicRes: 20, atk: 45,
-         bossEffects: ['burn','regen'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0}
+         bossEffects: ['burn','regen'], bossStatus: {shieldTurns:0,poisonTurns:0,freezeHits:0,enragedActivated:false,shieldTriggered:false,lastCounterBonus:0,itemHitCount:0,soulMilestone:0}
       };
       state.maps.push(newM);
       saveState();
