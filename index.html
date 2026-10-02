@@ -5283,6 +5283,7 @@ window.BetterLevelProfile = {
        HỆ THỐNG KÉO-THẢ VỊ TRÍ VẬT PHẨM
        - PC: HTML5 Drag & Drop
        - Mobile/tablet: Pointer Events + long-press
+       - Kéo vào vật phẩm khác = HOÁN ĐỔI đúng 2 vị trí
        - Thứ tự lưu riêng cho Shop/Túi Đồ
        ============================================================ */
     let dragDropSuppressClickUntil = 0;
@@ -5345,6 +5346,33 @@ window.BetterLevelProfile = {
       });
     }
 
+    /*
+     * Hoán đổi đúng 2 vị trí.
+     * Ví dụ: [A, B, C, D] kéo A vào vị trí C -> [C, B, A, D].
+     * Không đẩy các vật phẩm khác sang vị trí mới ngoài 2 vật phẩm được hoán đổi.
+     */
+    function swapDragCards(container, sourceCard, targetCard) {
+      if (!container || !sourceCard || !targetCard || sourceCard === targetCard) return false;
+      if (sourceCard.parentElement !== container || targetCard.parentElement !== container) return false;
+
+      const sourceMarker = document.createElement('span');
+      const targetMarker = document.createElement('span');
+      sourceMarker.style.display = 'none';
+      targetMarker.style.display = 'none';
+      sourceMarker.setAttribute('aria-hidden', 'true');
+      targetMarker.setAttribute('aria-hidden', 'true');
+
+      container.insertBefore(sourceMarker, sourceCard);
+      container.insertBefore(targetMarker, targetCard);
+
+      container.insertBefore(sourceCard, targetMarker);
+      container.insertBefore(targetCard, sourceMarker);
+
+      sourceMarker.remove();
+      targetMarker.remove();
+      return true;
+    }
+
     function addDragHint(card) {
       if (!card || card.querySelector('.drag-hint')) return;
       const hint = document.createElement('span');
@@ -5386,6 +5414,7 @@ window.BetterLevelProfile = {
           card._dragMode = 'native';
           container._draggedCard = card;
           container._draggedId = id;
+          container._dropTargetCard = null;
           container.classList.add('drag-sorting-active');
           card.classList.add('dragging-item');
           event.dataTransfer.effectAllowed = 'move';
@@ -5395,33 +5424,40 @@ window.BetterLevelProfile = {
         card.addEventListener('dragover', event => {
           if (!container._draggedCard || container._draggedCard === card) return;
           event.preventDefault();
-          const rect = card.getBoundingClientRect();
-          const vertical = event.clientY < rect.top + rect.height / 2;
+          event.dataTransfer.dropEffect = 'move';
+          container.querySelectorAll('.drag-over-item').forEach(el => {
+            if (el !== card) el.classList.remove('drag-over-item');
+          });
+          container._dropTargetCard = card;
           card.classList.add('drag-over-item');
-          if (vertical) container.insertBefore(container._draggedCard, card);
-          else container.insertBefore(container._draggedCard, card.nextSibling);
         });
 
         card.addEventListener('dragleave', () => {
           card.classList.remove('drag-over-item');
+          if (container._dropTargetCard === card) container._dropTargetCard = null;
         });
 
         card.addEventListener('drop', event => {
           event.preventDefault();
-          if (!container._draggedCard) return;
+          const sourceCard = container._draggedCard;
+          if (!sourceCard || sourceCard === card) return;
+
+          const swapped = swapDragCards(container, sourceCard, card);
           clearDragVisuals(container);
-          saveContainerOrder(container, stateKey);
-          dragDropSuppressClickUntil = Date.now() + 450;
+          if (swapped) {
+            saveContainerOrder(container, stateKey);
+            dragDropSuppressClickUntil = Date.now() + 450;
+          }
           container._draggedCard = null;
           container._draggedId = null;
+          container._dropTargetCard = null;
         });
 
         card.addEventListener('dragend', () => {
-          const hadDrag = !!container._draggedCard;
           clearDragVisuals(container);
-          if (hadDrag) saveContainerOrder(container, stateKey);
           container._draggedCard = null;
           container._draggedId = null;
+          container._dropTargetCard = null;
         });
 
         /* Mobile / touch fallback */
@@ -5439,6 +5475,7 @@ window.BetterLevelProfile = {
             longPressTriggered = true;
             container._draggedCard = card;
             container._draggedId = String(card.dataset.dragSortId || '');
+            container._dropTargetCard = null;
             container._touchPointerId = event.pointerId;
             container.classList.add('drag-sorting-active');
             card.classList.add('dragging-item');
@@ -5470,24 +5507,28 @@ window.BetterLevelProfile = {
             container.querySelectorAll('.drag-over-item').forEach(el => {
               if (el !== targetCard) el.classList.remove('drag-over-item');
             });
+            container._dropTargetCard = targetCard;
             targetCard.classList.add('drag-over-item');
-
-            const rect = targetCard.getBoundingClientRect();
-            const before = moveEvent.clientY < rect.top + rect.height / 2;
-            if (before) container.insertBefore(card, targetCard);
-            else container.insertBefore(card, targetCard.nextSibling);
           };
 
           const finish = finishEvent => {
             if (finishEvent && finishEvent.pointerId !== event.pointerId) return;
             clearTimeout(timer);
             if (longPressTriggered && container._draggedCard === card) {
+              const targetCard = container._dropTargetCard;
+              const swapped = targetCard && targetCard !== card
+                ? swapDragCards(container, card, targetCard)
+                : false;
+
               clearDragVisuals(container);
-              saveContainerOrder(container, stateKey);
-              dragDropSuppressClickUntil = Date.now() + 650;
+              if (swapped) {
+                saveContainerOrder(container, stateKey);
+                dragDropSuppressClickUntil = Date.now() + 650;
+              }
               try { card.releasePointerCapture(event.pointerId); } catch (_) {}
               container._draggedCard = null;
               container._draggedId = null;
+              container._dropTargetCard = null;
             }
             cleanup();
           };
