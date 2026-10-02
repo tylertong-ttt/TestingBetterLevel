@@ -434,54 +434,6 @@
     .border-legendary { border-color: var(--rarity-legendary) !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
     .border-mythic { border-color: var(--rarity-mythic) !important; box-shadow: 0 0 18px rgba(244, 63, 94, 0.4); }
 
-
-
-    /* ============================================================
-       DRAG & DROP — SHOP + INVENTORY ITEM ORDER
-       Chỉ bổ sung khả năng kéo-thả, không thay đổi layout cũ.
-       ============================================================ */
-    .item-card.drag-sort-enabled {
-      cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
-    }
-    .item-card.drag-sort-enabled:active { cursor: grabbing; }
-    .item-card.dragging-item {
-      opacity: .42;
-      transform: scale(.985);
-      box-shadow: 0 0 0 2px rgba(99,102,241,.36), 0 10px 24px rgba(0,0,0,.28);
-    }
-    .item-card.drag-over-item {
-      transform: translateY(-3px);
-      box-shadow: 0 0 0 2px rgba(168,85,247,.45), 0 12px 28px rgba(99,102,241,.18);
-    }
-    .item-card .drag-hint {
-      position:absolute;
-      top:7px;
-      left:7px;
-      z-index:4;
-      width:23px;
-      height:23px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:7px;
-      color:rgba(255,255,255,.72);
-      background:rgba(5,10,20,.58);
-      border:1px solid rgba(255,255,255,.08);
-      font-size:12px;
-      line-height:1;
-      pointer-events:none;
-      opacity:.62;
-      backdrop-filter:blur(6px);
-    }
-    .item-grid.drag-sorting-active .item-card.drag-sort-enabled { transition:none; }
-    @media (pointer: coarse) {
-      .item-card .drag-hint { opacity:.78; }
-    }
-
     /* Map & Boss Viewport */
     .map-viewport {
       width: 100%; height: 370px; border-radius: 16px; position: relative; overflow: hidden;
@@ -2057,34 +2009,81 @@
 }
 
 
-    /* FINAL — GACHA BANNER PROFESSIONAL WIDE OVERRIDE */
-    .gacha-banner{
-      width:calc(100% + 40px);
-      max-width:none;
-      margin-left:-20px;
-      min-height:250px;
-      aspect-ratio:5.6 / 1;
-      padding:24px 28px;
-      border-radius:18px;
-      background-size:cover;
-      background-position:center center;
-    }
-    .gacha-banner-content{
-      width:min(760px,100%);
-      max-width:760px;
-    }
 
-    @media(max-width:700px){
-      .gacha-banner{
-        width:calc(100% + 24px);
-        margin-left:-12px;
-        min-height:185px;
-        aspect-ratio:4.5 / 1;
-        padding:16px 14px;
-        border-radius:15px;
-      }
-      .gacha-banner-content{max-width:100%;}
-    }
+/* ============================================================
+   V24.1 QUARTZ + DRAG/DROP + HD BANNER ENHANCEMENT
+   ============================================================ */
+.quartz-shop-group{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin:0 0 14px;
+}
+.quartz-shop-group .item-card{
+  min-width:0;
+  border-color:rgba(56,189,248,.28);
+  background:linear-gradient(180deg,rgba(56,189,248,.06),rgba(14,20,36,.82));
+}
+.quartz-shop-group .item-thumb-wrapper{background:rgba(255,255,255,.045);}
+.quartz-img-basic{filter:saturate(.72) brightness(.96);}
+.quartz-img-pure{filter:saturate(.92) brightness(1.05) contrast(1.02);}
+.quartz-img-chaos{filter:saturate(1.08) contrast(1.05) brightness(1.02);}
+
+.item-card.is-draggable{cursor:grab;user-select:none;-webkit-user-select:none;}
+.item-card.is-draggable:active{cursor:grabbing;}
+.item-card.dragging{opacity:.42;transform:scale(.985);}
+.item-card.drop-target{
+  border-color:rgba(99,102,241,.95)!important;
+  box-shadow:0 0 0 2px rgba(99,102,241,.22),0 0 22px rgba(99,102,241,.20)!important;
+}
+.item-card .drag-handle{
+  position:absolute;top:8px;right:8px;z-index:3;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:24px;border-radius:8px;
+  background:rgba(8,12,22,.72);border:1px solid rgba(255,255,255,.1);
+  color:#cbd5e1;font-size:13px;line-height:1;
+  pointer-events:none;
+}
+.drag-help-note{
+  font-size:10.5px;color:var(--subtext);margin:-2px 0 8px;line-height:1.4;
+}
+.quartz-edit-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;}
+.quartz-type-pill{font-size:9px;font-weight:900;padding:3px 7px;border-radius:999px;background:rgba(56,189,248,.09);border:1px solid rgba(56,189,248,.2);color:#bae6fd;}
+
+/* Banner source target: 1920×600 px. The web display is wider than the card content,
+   while the source image stays sharp and is not globally dimmed. */
+.gacha-banner{
+  width:calc(100% + 40px);
+  margin-left:-20px;
+  height:260px;
+  min-height:260px;
+  padding:22px;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center center;
+  background-color:#0a1020;
+  filter:none!important;
+  image-rendering:auto;
+}
+.gacha-banner::after{
+  background:linear-gradient(180deg,rgba(5,8,15,0) 0%,rgba(5,8,15,.08) 42%,rgba(5,8,15,.40) 100%)!important;
+}
+.gacha-banner-content{
+  max-width:780px;
+  text-shadow:0 2px 12px rgba(0,0,0,.72);
+}
+@media(max-width:700px){
+  .quartz-shop-group{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+  .quartz-shop-group .item-card{padding:7px;border-radius:11px;}
+  .quartz-shop-group .item-card button{font-size:9px;padding:6px 4px;}
+  .quartz-shop-group .item-thumb-wrapper{margin-bottom:6px;border-radius:9px;}
+  .quartz-shop-group .item-card b{font-size:10.5px!important;}
+  .quartz-shop-group .item-card p,.quartz-shop-group .quartz-type-pill{font-size:8.5px!important;}
+  .drag-handle{width:24px!important;height:21px!important;top:6px!important;right:6px!important;font-size:11px!important;}
+  .gacha-banner{width:calc(100% + 24px);margin-left:-12px;height:190px;min-height:190px;padding:16px;}
+  .gacha-banner-content{max-width:100%;}
+}
+
 </style>
 </head>
 <body>
@@ -2474,10 +2473,13 @@
           <button id="shopSectionEquipBtn" class="chip-btn" style="flex:1; padding:9px 12px;" onclick="switchShopSection('equipment')">⚔️ Shop Trang Bị</button>
         </div>
         <div id="shopItemsSection">
-        <h4 style="margin: 14px 0 8px; color:var(--primary); font-size:14px;">✨ Dược Tễ, Bùa Chú & Rương Báu</h4>
+        <h4 style="margin: 14px 0 8px; color:var(--cyan); font-size:14px;">💎 Thạch Anh Cường Hóa</h4>
+        <div id="shopQuartzSection" class="quartz-shop-group" aria-label="Ba loại Thạch Anh"></div>
+        <h4 style="margin: 18px 0 8px; color:var(--primary); font-size:14px;">✨ Dược Tễ, Bùa Chú & Rương Báu</h4>
         <div class="filter-bar" id="consumableFilterBar">
           <span style="font-size:12px; color:var(--subtext); margin-right:4px;">Lọc loại:</span>
           <button class="chip-btn active" onclick="filterConsumables('all', event)">Tất cả</button>
+          <button class="chip-btn" onclick="filterConsumables('quartz', event)">💎 Thạch Anh</button>
           <button class="chip-btn" onclick="filterConsumables('heal', event)">🧪 Hồi Phục Máu</button>
           <button class="chip-btn" onclick="filterConsumables('buff', event)">⚡ Bùa Chú Tác Chiến</button>
           <button class="chip-btn" onclick="filterConsumables('chest', event)">📦 Rương Báu</button>
@@ -2889,7 +2891,7 @@
         <input type="number" id="editShopPrice" style="width:100%;">
       </div>
       <div>
-        <label style="font-size:12px;">Link ảnh:</label>
+        <label style="font-size:12px;">Link ảnh (chỉnh được ảnh từng loại):</label>
         <input type="text" id="editShopImg" style="width:100%;">
       </div>
       <div>
@@ -3326,48 +3328,6 @@
       }
     ];
 
-    /* ============================================================
-       QUARTZ ASSET CONFIG — CHỈNH ẢNH 3 LOẠI THẠCH ANH TẠI ĐÂY
-       - url   : ảnh gốc; có thể thay bằng URL ảnh khác.
-       - filter: màu/ánh sáng để 3 cấp vẫn đồng bộ phong cách với
-                 ảnh Thạch Anh hiện có trong Shop.
-       ============================================================ */
-    const QUARTZ_IMAGE_CONFIG = {
-      basic: {
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
-        filter: 'saturate(0.95) hue-rotate(175deg) brightness(0.96) contrast(1.05)'
-      },
-      pure: {
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
-        filter: 'saturate(1.15) hue-rotate(120deg) brightness(1.08) contrast(1.08)'
-      },
-      chaos: {
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
-        filter: 'saturate(1.55) hue-rotate(265deg) brightness(0.88) contrast(1.15)'
-      }
-    };
-
-    const QUARTZ_ID_TO_KEY = {
-      quartz_basic: 'basic',
-      quartz_pure: 'pure',
-      quartz_chaos: 'chaos'
-    };
-
-    function getQuartzImageUrl(key, size=250) {
-      const cfg = QUARTZ_IMAGE_CONFIG[key];
-      if (!cfg || !cfg.url) return '';
-      const url = String(cfg.url);
-      if (/images\.unsplash\.com/i.test(url) && !/[?&]w=/.test(url)) {
-        return `${url}?w=${size}&auto=format&fit=crop&q=${size >= 400 ? 70 : 60}`;
-      }
-      return url;
-    }
-
-    function getQuartzImageStyle(key) {
-      const cfg = QUARTZ_IMAGE_CONFIG[key];
-      return cfg && cfg.filter ? `filter:${cfg.filter};` : '';
-    }
-
     const DEFAULT_SHOP_CATALOG = [
       // Hồi phục HP (heal)
       { id: 'flask_vitality', category: 'heal', name: 'Sinh Mệnh Tinh Thủy', price: 40, img: 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=250&auto=format&fit=crop&q=60', desc: 'Hồi phục ngay lập tức 100 HP cho nhân vật.' },
@@ -3389,10 +3349,10 @@
       { id: 'shield_item', category: 'buff', name: 'Khiên Streak', price: 90, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=250&auto=format&fit=crop&q=60', desc: 'Bảo vệ chuỗi ngày nếu lỡ quên làm nhiệm vụ.' },
       { id: 'gacha_ticket', category: 'gacha', name: '🎟️ Vé Gacha', price: 150, img: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=250&auto=format&fit=crop&q=60', desc: 'Một vé quay Gacha. Giá cố định 150 Vàng.' },
 
-      // Nguyên liệu Thạch Anh bán trong Shop — đủ 3 cấp
-      { id: 'quartz_basic', category: 'buff', name: 'Thạch Anh Sơ Cấp', price: 60, img: getQuartzImageUrl('basic', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.' },
-      { id: 'quartz_pure', category: 'buff', name: 'Thạch Anh Tinh Khiết', price: 180, img: getQuartzImageUrl('pure', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
-      { id: 'quartz_chaos', category: 'buff', name: 'Thạch Anh Hỗn Độn', price: 500, img: getQuartzImageUrl('chaos', 250), desc: 'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.' },
+      // Nguyên liệu Thạch Anh bán trong Shop — dùng cùng một phong cách ảnh mặc định, có thể sửa URL từng loại.
+      { id: 'quartz_basic', category: 'quartz', name: 'Thạch Anh Sơ Cấp', price: 60, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.' },
+      { id: 'quartz_pure', category: 'quartz', name: 'Thạch Anh Tinh Khiết', price: 180, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.' },
+      { id: 'quartz_chaos', category: 'quartz', name: 'Thạch Anh Hỗn Độn', price: 420, img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=82', desc: 'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.' },
 
       // Rương báu (chest)
       { id: 'chest_wood', category: 'chest', name: 'Rương Gỗ', price: 40, img: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=250&auto=format&fit=crop&q=60', desc: 'Rương sơ cấp: lượng Vàng/EXP nhỏ, chủ yếu hỗ trợ tiến trình và có cơ hội nhận Thạch Anh.' },
@@ -3448,6 +3408,9 @@
         pomodoro_tomato: 0,
         gacha_ticket: 0
       },
+
+      // Thứ tự hiển thị Túi Đồ (kéo-thả để đổi chỗ và lưu vĩnh viễn)
+      inventoryOrder: ['quartz_basic','quartz_pure','quartz_chaos','flask_vitality','crimson_elixir','chest_wood','chest_silver','gacha_ticket','pomodoro_tomato'],
 
       equipped: {
         hat: null, armor: null, pants: null, shoes: null,
@@ -3516,38 +3479,22 @@
     if (!state.slotLevels) {
       state.slotLevels = { hat: 0, armor: 0, pants: 0, shoes: 0, weapon: 0, costume: 0, item1: 0, item2: 0, item3: 0 };
     }
-    if (!state.quartz) state.quartz = { basic: 3, pure: 1, chaos: 0 };
+    if (!state.quartz || typeof state.quartz !== 'object') state.quartz = { basic: 3, pure: 1, chaos: 0 };
+    if (typeof state.quartz.basic !== 'number') state.quartz.basic = 0;
+    if (typeof state.quartz.pure !== 'number') state.quartz.pure = 0;
+    if (typeof state.quartz.chaos !== 'number') state.quartz.chaos = 0;
     if (!state.playlist || state.playlist.length === 0) state.playlist = DEFAULT_PLAYLIST;
     if (!state.shopCatalog) state.shopCatalog = DEFAULT_SHOP_CATALOG;
     else {
       const ticketMeta = DEFAULT_SHOP_CATALOG.find(x => x.id === 'gacha_ticket');
       if (ticketMeta && !state.shopCatalog.some(x => x.id === 'gacha_ticket')) state.shopCatalog.push({...ticketMeta});
-
-      // Migration an toàn: chỉ bổ sung 2 Thạch Anh còn thiếu và đồng bộ ảnh
-      // cho 3 loại; không ghi đè giá hay dữ liệu tuỳ chỉnh của các item khác.
-      DEFAULT_SHOP_CATALOG
-        .filter(item => QUARTZ_ID_TO_KEY[item.id])
-        .forEach(item => {
-          const existing = state.shopCatalog.find(x => x.id === item.id);
-          if (existing) {
-            existing.img = item.img;
-            existing.category = item.category;
-            existing.name = item.name;
-            existing.desc = item.desc;
-          } else {
-            state.shopCatalog.push({...item});
-          }
-        });
+      ['quartz_basic','quartz_pure','quartz_chaos'].forEach(qid=>{
+        const meta=DEFAULT_SHOP_CATALOG.find(x=>x.id===qid);
+        if(meta && !state.shopCatalog.some(x=>x.id===qid)) state.shopCatalog.push({...meta});
+      });
     }
-    /* ============================================================
-       Migration cho thứ tự kéo-thả Shop / Túi Đồ.
-       Không ảnh hưởng dữ liệu vật phẩm hiện tại.
-       ============================================================ */
-    if (!Array.isArray(state.shopConsumableOrder)) state.shopConsumableOrder = [];
-    if (!Array.isArray(state.shopEquipmentOrder)) state.shopEquipmentOrder = [];
-    if (!Array.isArray(state.inventoryConsumableOrder)) state.inventoryConsumableOrder = [];
-    if (!Array.isArray(state.inventoryEquipmentOrder)) state.inventoryEquipmentOrder = [];
-
+    if (!Array.isArray(state.inventoryOrder)) state.inventoryOrder = [];
+    ['quartz_basic','quartz_pure','quartz_chaos'].forEach(k=>{ if(!state.inventoryOrder.includes(k)) state.inventoryOrder.push(k); });
     if (!state.consumables) state.consumables = {};
     if (typeof state.consumables.pomodoro_tomato !== 'number') state.consumables.pomodoro_tomato = 0;
     if (typeof state.consumables.gacha_ticket !== 'number') state.consumables.gacha_ticket = 0;
@@ -4817,9 +4764,9 @@ window.BetterLevelProfile = {
       const eq=(state.equipmentInventory||[]).find(x=>x.name===name);
       if(eq&&eq.img) return eq.img;
       const quartzMap={
-        'Thạch Anh Sơ Cấp': getQuartzImageUrl('basic', 420),
-        'Thạch Anh Tinh Khiết': getQuartzImageUrl('pure', 420),
-        'Thạch Anh Hỗn Độn': getQuartzImageUrl('chaos', 420)
+        'Thạch Anh Sơ Cấp':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
+        'Thạch Anh Tinh Khiết':'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=420&auto=format&fit=crop&q=70',
+        'Thạch Anh Hỗn Độn':'https://images.unsplash.com/photo-1563089145-599997674d42?w=420&auto=format&fit=crop&q=70'
       };
       return quartzMap[name]||'';
     }
@@ -4881,9 +4828,8 @@ window.BetterLevelProfile = {
       if (state.coins < finalPrice) return alert("Bạn không đủ Vàng để mua!");
       state.coins -= finalPrice;
 
-      const quartzKey = QUARTZ_ID_TO_KEY[itemKey];
-      if (quartzKey) {
-        state.quartz[quartzKey] = (state.quartz[quartzKey] || 0) + 1;
+      if (itemKey === 'quartz_pure') {
+        state.quartz.pure = (state.quartz.pure || 0) + 1;
       } else {
         state.consumables[itemKey] = (state.consumables[itemKey] || 0) + 1;
       }
@@ -5308,314 +5254,16 @@ window.BetterLevelProfile = {
       localStorage.setItem(STORAGE_KEY_V8, JSON.stringify(state));
     }
 
-    /* ============================================================
-       HỆ THỐNG KÉO-THẢ VỊ TRÍ VẬT PHẨM
-       - PC: HTML5 Drag & Drop
-       - Mobile/tablet: Pointer Events + long-press
-       - Kéo vào vật phẩm khác = HOÁN ĐỔI đúng 2 vị trí
-       - Thứ tự lưu riêng cho Shop/Túi Đồ
-       ============================================================ */
-    let dragDropSuppressClickUntil = 0;
-
-    function normalizeDragOrder(order, ids) {
-      const valid = new Set(ids.map(String));
-      const cleaned = (Array.isArray(order) ? order : [])
-        .map(String)
-        .filter(id => valid.has(id));
-
-      const seen = new Set(cleaned);
-      ids.forEach(id => {
-        const sid = String(id);
-        if (!seen.has(sid)) cleaned.push(sid);
-      });
-      return cleaned;
-    }
-
-    function getContainerItemIds(container) {
-      if (!container) return [];
-      return [...container.children]
-        .filter(el => el && el.dataset && el.dataset.dragSortId)
-        .map(el => String(el.dataset.dragSortId));
-    }
-
-    function restoreContainerOrder(container, stateKey) {
-      if (!container || !Array.isArray(state[stateKey])) return;
-
-      const cards = [...container.children]
-        .filter(el => el && el.dataset && el.dataset.dragSortId);
-      if (cards.length < 2) return;
-
-      const byId = new Map(cards.map(card => [String(card.dataset.dragSortId), card]));
-      const desired = normalizeDragOrder(state[stateKey], cards.map(card => card.dataset.dragSortId));
-
-      desired.forEach(id => {
-        const card = byId.get(String(id));
-        if (card) container.appendChild(card);
-      });
-
-      state[stateKey] = normalizeDragOrder(
-        state[stateKey],
-        getContainerItemIds(container)
-      );
-    }
-
-    function saveContainerOrder(container, stateKey) {
-      if (!container) return;
-      const ids = getContainerItemIds(container);
-      if (!ids.length) return;
-      state[stateKey] = normalizeDragOrder(state[stateKey], ids);
-      saveState();
-    }
-
-    function clearDragVisuals(container) {
-      if (!container) return;
-      container.classList.remove('drag-sorting-active');
-      container.querySelectorAll('.dragging-item, .drag-over-item').forEach(el => {
-        el.classList.remove('dragging-item', 'drag-over-item');
-      });
-    }
-
-    /*
-     * Hoán đổi đúng 2 vị trí.
-     * Ví dụ: [A, B, C, D] kéo A vào vị trí C -> [C, B, A, D].
-     * Không đẩy các vật phẩm khác sang vị trí mới ngoài 2 vật phẩm được hoán đổi.
-     */
-    function swapDragCards(container, sourceCard, targetCard) {
-      if (!container || !sourceCard || !targetCard || sourceCard === targetCard) return false;
-      if (sourceCard.parentElement !== container || targetCard.parentElement !== container) return false;
-
-      const sourceMarker = document.createElement('span');
-      const targetMarker = document.createElement('span');
-      sourceMarker.style.display = 'none';
-      targetMarker.style.display = 'none';
-      sourceMarker.setAttribute('aria-hidden', 'true');
-      targetMarker.setAttribute('aria-hidden', 'true');
-
-      container.insertBefore(sourceMarker, sourceCard);
-      container.insertBefore(targetMarker, targetCard);
-
-      container.insertBefore(sourceCard, targetMarker);
-      container.insertBefore(targetCard, sourceMarker);
-
-      sourceMarker.remove();
-      targetMarker.remove();
-      return true;
-    }
-
-    function addDragHint(card) {
-      if (!card || card.querySelector('.drag-hint')) return;
-      const hint = document.createElement('span');
-      hint.className = 'drag-hint';
-      hint.textContent = '⋮⋮';
-      hint.title = 'Kéo để đổi vị trí';
-      hint.setAttribute('aria-hidden', 'true');
-      card.appendChild(hint);
-    }
-
-    function bindSortableContainer(containerId, stateKey, options = {}) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      const respectSort = options.respectSort !== false;
-      if (respectSort) restoreContainerOrder(container, stateKey);
-      const cards = [...container.children]
-        .filter(el => el && el.dataset && el.dataset.dragSortId);
-
-      if (!cards.length) return;
-
-      container.classList.add('drag-sort-container');
-
-      cards.forEach(card => {
-        if (card.dataset.dragSortBound === '1') return;
-        card.dataset.dragSortBound = '1';
-        card.classList.add('drag-sort-enabled');
-        card.draggable = true;
-        addDragHint(card);
-
-        card.addEventListener('dragstart', event => {
-          if (event.target.closest('button, input, select, textarea, a')) {
-            event.preventDefault();
-            return;
-          }
-          const id = String(card.dataset.dragSortId || '');
-          if (!id) return;
-
-          card._dragMode = 'native';
-          container._draggedCard = card;
-          container._draggedId = id;
-          container._dropTargetCard = null;
-          container.classList.add('drag-sorting-active');
-          card.classList.add('dragging-item');
-          event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('text/plain', id);
-        });
-
-        card.addEventListener('dragover', event => {
-          if (!container._draggedCard || container._draggedCard === card) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'move';
-          container.querySelectorAll('.drag-over-item').forEach(el => {
-            if (el !== card) el.classList.remove('drag-over-item');
-          });
-          container._dropTargetCard = card;
-          card.classList.add('drag-over-item');
-        });
-
-        card.addEventListener('dragleave', () => {
-          card.classList.remove('drag-over-item');
-          if (container._dropTargetCard === card) container._dropTargetCard = null;
-        });
-
-        card.addEventListener('drop', event => {
-          event.preventDefault();
-          const sourceCard = container._draggedCard;
-          if (!sourceCard || sourceCard === card) return;
-
-          const swapped = swapDragCards(container, sourceCard, card);
-          clearDragVisuals(container);
-          if (swapped) {
-            saveContainerOrder(container, stateKey);
-            dragDropSuppressClickUntil = Date.now() + 450;
-          }
-          container._draggedCard = null;
-          container._draggedId = null;
-          container._dropTargetCard = null;
-        });
-
-        card.addEventListener('dragend', () => {
-          clearDragVisuals(container);
-          container._draggedCard = null;
-          container._draggedId = null;
-          container._dropTargetCard = null;
-        });
-
-        /* Mobile / touch fallback */
-        card.addEventListener('pointerdown', event => {
-          if (event.pointerType === 'mouse') return;
-          if (event.target.closest('button, input, select, textarea, a')) return;
-
-          const startX = event.clientX;
-          const startY = event.clientY;
-          let longPressTriggered = false;
-          let moved = false;
-
-          const beginTouchDrag = () => {
-            if (moved || !document.body.contains(card)) return;
-            longPressTriggered = true;
-            container._draggedCard = card;
-            container._draggedId = String(card.dataset.dragSortId || '');
-            container._dropTargetCard = null;
-            container._touchPointerId = event.pointerId;
-            container.classList.add('drag-sorting-active');
-            card.classList.add('dragging-item');
-            try { card.setPointerCapture(event.pointerId); } catch (_) {}
-          };
-
-          const timer = setTimeout(beginTouchDrag, 360);
-
-          const onMove = moveEvent => {
-            if (moveEvent.pointerId !== event.pointerId) return;
-            const dx = moveEvent.clientX - startX;
-            const dy = moveEvent.clientY - startY;
-            if (!longPressTriggered && Math.hypot(dx, dy) > 9) {
-              moved = true;
-              clearTimeout(timer);
-              cleanup();
-              return;
-            }
-            if (!longPressTriggered || container._draggedCard !== card) return;
-
-            moveEvent.preventDefault();
-            const target = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
-            const targetCard = target && target.closest
-              ? target.closest('.item-card[data-drag-sort-id]')
-              : null;
-
-            if (!targetCard || targetCard === card || targetCard.parentElement !== container) return;
-
-            container.querySelectorAll('.drag-over-item').forEach(el => {
-              if (el !== targetCard) el.classList.remove('drag-over-item');
-            });
-            container._dropTargetCard = targetCard;
-            targetCard.classList.add('drag-over-item');
-          };
-
-          const finish = finishEvent => {
-            if (finishEvent && finishEvent.pointerId !== event.pointerId) return;
-            clearTimeout(timer);
-            if (longPressTriggered && container._draggedCard === card) {
-              const targetCard = container._dropTargetCard;
-              const swapped = targetCard && targetCard !== card
-                ? swapDragCards(container, card, targetCard)
-                : false;
-
-              clearDragVisuals(container);
-              if (swapped) {
-                saveContainerOrder(container, stateKey);
-                dragDropSuppressClickUntil = Date.now() + 650;
-              }
-              try { card.releasePointerCapture(event.pointerId); } catch (_) {}
-              container._draggedCard = null;
-              container._draggedId = null;
-              container._dropTargetCard = null;
-            }
-            cleanup();
-          };
-
-          const cleanup = () => {
-            clearTimeout(timer);
-            window.removeEventListener('pointermove', onMove, { passive:false });
-            window.removeEventListener('pointerup', finish, { passive:false });
-            window.removeEventListener('pointercancel', finish, { passive:false });
-          };
-
-          window.addEventListener('pointermove', onMove, { passive:false });
-          window.addEventListener('pointerup', finish, { passive:false });
-          window.addEventListener('pointercancel', finish, { passive:false });
-        }, { passive:true });
-      });
-
-      /* Mỗi lần render lại, những item mới sẽ được tự động bind. */
-      if (respectSort) {
-        state[stateKey] = normalizeDragOrder(
-          state[stateKey],
-          getContainerItemIds(container)
-        );
-      }
-    }
-
-    function setupAllItemDragAndDrop() {
-      bindSortableContainer('shopConsumables', 'shopConsumableOrder');
-      bindSortableContainer(
-        'shopEquipment',
-        'shopEquipmentOrder',
-        { respectSort: currentShopSort === 'default' }
-      );
-      bindSortableContainer('invConsumables', 'inventoryConsumableOrder');
-      bindSortableContainer('invEquipment', 'inventoryEquipmentOrder');
-    }
-
-    document.addEventListener('click', event => {
-      if (Date.now() >= dragDropSuppressClickUntil) return;
-      const card = event.target.closest && event.target.closest('.item-card[data-drag-sort-id]');
-      if (!card) return;
-      event.preventDefault();
-      event.stopPropagation();
-    }, true);
-
     function renderShopConsumables() {
       let filtered = state.shopCatalog;
       if (currentConsumableFilter !== 'all') {
         filtered = filtered.filter(item => item.category === currentConsumableFilter);
       }
 
-      document.getElementById('shopConsumables').innerHTML = filtered.map(item => {
-        const quartzKey = QUARTZ_ID_TO_KEY[item.id];
-        const quartzStyle = quartzKey ? ` style="${getQuartzImageStyle(quartzKey)}"` : '';
-        return `
-        <div class="item-card" data-drag-sort-id="${item.id}">
+      document.getElementById('shopConsumables').innerHTML = filtered.map(item => `
+        <div class="item-card">
           <div class="item-thumb-wrapper">
-            <img src="${item.img}" class="item-thumb-large"${quartzStyle}>
+            <img src="${item.img}" class="item-thumb-large">
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <b style="font-size:13px;">${item.name}</b>
@@ -5627,8 +5275,7 @@ window.BetterLevelProfile = {
             <button onclick="buyConsumable('${item.id}')">Mua</button>
           </div>
         </div>
-      `;
-      }).join('') || `<p style="font-size:13px; color:var(--subtext); grid-column:span 3;">Không có vật phẩm nào trong danh mục này.</p>`;
+      `).join('') || `<p style="font-size:13px; color:var(--subtext); grid-column:span 3;">Không có vật phẩm nào trong danh mục này.</p>`;
     }
 
     function renderShopEquipment() {
@@ -5653,7 +5300,7 @@ window.BetterLevelProfile = {
         : list.map(g => {
           const rarity = RARITY_INFO[g.rarity || 'common'];
           return `
-            <div class="item-card has-tooltip ${rarity.class}" data-drag-sort-id="${g.id}">
+            <div class="item-card has-tooltip ${rarity.class}">
               <div class="item-thumb-wrapper">
                 <img src="${g.img}" class="item-thumb-large">
               </div>
@@ -5938,8 +5585,8 @@ window.BetterLevelProfile = {
       // Thạch anh hiển thị trong kho
       if ((state.quartz.basic || 0) > 0) {
         invConsHtml += `
-          <div class="item-card" data-drag-sort-id="quartz_basic">
-            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('basic', 250)}" style="${getQuartzImageStyle('basic')}" class="item-thumb-large"></div>
+          <div class="item-card">
+            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Sơ Cấp</b><span style="color:var(--primary); font-weight:800;">x${state.quartz.basic}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv 0 -> +3.</small>
           </div>
@@ -5947,8 +5594,8 @@ window.BetterLevelProfile = {
       }
       if ((state.quartz.pure || 0) > 0) {
         invConsHtml += `
-          <div class="item-card" data-drag-sort-id="quartz_pure">
-            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('pure', 250)}" style="${getQuartzImageStyle('pure')}" class="item-thumb-large"></div>
+          <div class="item-card">
+            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Tinh Khiết</b><span style="color:var(--cyan); font-weight:800;">x${state.quartz.pure}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +4 -> +7.</small>
           </div>
@@ -5956,8 +5603,8 @@ window.BetterLevelProfile = {
       }
       if ((state.quartz.chaos || 0) > 0) {
         invConsHtml += `
-          <div class="item-card" data-drag-sort-id="quartz_chaos">
-            <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('chaos', 250)}" style="${getQuartzImageStyle('chaos')}" class="item-thumb-large"></div>
+          <div class="item-card">
+            <div class="item-thumb-wrapper"><img src="https://images.unsplash.com/photo-1563089145-599997674d42?w=250&auto=format&fit=crop&q=60" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Hỗn Độn</b><span style="color:var(--red); font-weight:800;">x${state.quartz.chaos}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +8 -> +10.</small>
           </div>
@@ -5967,7 +5614,7 @@ window.BetterLevelProfile = {
       const gachaTicketCount = state.consumables.gacha_ticket || 0;
       if (gachaTicketCount > 0) {
         invConsHtml += `
-          <div class="item-card border-legendary" data-drag-sort-id="gacha_ticket">
+          <div class="item-card border-legendary">
             <div class="item-thumb-wrapper"><div style="font-size:64px;">🎟️</div></div>
             <div style="display:flex;justify-content:space-between;align-items:center;"><b>Vé Gacha</b><span style="color:var(--gold);font-weight:800;">x${gachaTicketCount}</span></div>
             <small style="color:var(--subtext);margin:4px 0;">Dùng để quay Gacha. Giá Shop: 150 🪙.</small>
@@ -5978,7 +5625,7 @@ window.BetterLevelProfile = {
       const tomatoCount = state.consumables.pomodoro_tomato || 0;
       if (tomatoCount > 0) {
         invConsHtml += `
-          <div class="item-card border-legendary" data-drag-sort-id="pomodoro_tomato">
+          <div class="item-card border-legendary">
             <div class="item-thumb-wrapper"><div style="font-size:72px; filter:drop-shadow(0 0 16px rgba(244,63,94,.35));">🍅</div></div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <b style="font-size:13px;">Cà Chua Pomodoro</b>
@@ -6000,7 +5647,7 @@ window.BetterLevelProfile = {
           const meta = state.shopCatalog.find(x => x.id === k);
           if (meta) {
             invConsHtml += `
-              <div class="item-card" data-drag-sort-id="${k}">
+              <div class="item-card">
                 <div class="item-thumb-wrapper"><img src="${meta.img}" class="item-thumb-large"></div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <b style="font-size:13px;">${meta.name}</b>
@@ -6023,7 +5670,7 @@ window.BetterLevelProfile = {
         : state.equipmentInventory.map(item => {
           const rarity = RARITY_INFO[item.rarity || 'common'];
           return `
-            <div class="item-card has-tooltip ${rarity.class}" data-drag-sort-id="${item.id}">
+            <div class="item-card has-tooltip ${rarity.class}">
               <div class="item-thumb-wrapper">
                 <img src="${item.img}" class="item-thumb-large">
               </div>
@@ -6040,9 +5687,6 @@ window.BetterLevelProfile = {
             </div>
           `;
         }).join('');
-
-      // Khôi phục + bind thứ tự kéo-thả sau mỗi lần render.
-      setupAllItemDragAndDrop();
 
       // Background video / image — dùng một layer cố định để căn giữa ổn định trên PC + mobile
       const bgVideo = document.getElementById('bgVideo');
@@ -6132,11 +5776,6 @@ window.BetterLevelProfile = {
           if (!state.activeBuffs) state.activeBuffs = {};
           if (!state.consumables) state.consumables = {};
           if (!state.quartz) state.quartz = {basic:0,pure:0,chaos:0};
-          if (!Array.isArray(state.shopConsumableOrder)) state.shopConsumableOrder=[];
-          if (!Array.isArray(state.shopEquipmentOrder)) state.shopEquipmentOrder=[];
-          if (!Array.isArray(state.inventoryConsumableOrder)) state.inventoryConsumableOrder=[];
-          if (!Array.isArray(state.inventoryEquipmentOrder)) state.inventoryEquipmentOrder=[];
-
           if (!state.shopCatalog) state.shopCatalog = DEFAULT_SHOP_CATALOG;
           else if(!state.shopCatalog.some(x=>x.id==='gacha_ticket')){const ticketMeta=DEFAULT_SHOP_CATALOG.find(x=>x.id==='gacha_ticket');if(ticketMeta)state.shopCatalog.push({...ticketMeta});}
           if (typeof state.consumables.pomodoro_tomato !== 'number') state.consumables.pomodoro_tomato = 0;
@@ -6362,6 +6001,333 @@ window.BetterLevelProfile = {
   window.addEventListener('resize', hardenBackgroundMedia, {passive:true});
 })();
 </script>
+
+<script>
+/* V24.1 — Quartz sync, persistent item ordering, drag/swap, and crisp wide Gacha banner. */
+(function(){
+  const QUARTZ_KEYS=['quartz_basic','quartz_pure','quartz_chaos'];
+  const QUARTZ_META={
+    quartz_basic:{stoneKey:'basic',type:'SƠ CẤP',name:'Thạch Anh Sơ Cấp',icon:'🔹',className:'quartz-basic',desc:'Nguyên liệu cường hóa ô trang bị cấp +0 đến +3.'},
+    quartz_pure:{stoneKey:'pure',type:'TINH KHIẾT',name:'Thạch Anh Tinh Khiết',icon:'🔷',className:'quartz-pure',desc:'Nguyên liệu cường hóa ô trang bị cấp +4 đến +7.'},
+    quartz_chaos:{stoneKey:'chaos',type:'HỖN ĐỘN',name:'Thạch Anh Hỗn Độn',icon:'🔮',className:'quartz-chaos',desc:'Nguyên liệu cường hóa ô trang bị cấp +8 đến +10.'}
+  };
+
+  function ensureQuartzShopCatalog(){
+    if(!state.quartz || typeof state.quartz!=='object') state.quartz={basic:0,pure:0,chaos:0};
+    ['basic','pure','chaos'].forEach(k=>{if(typeof state.quartz[k]!=='number' || Number.isNaN(state.quartz[k])) state.quartz[k]=0;});
+    if(!Array.isArray(state.shopCatalog)) state.shopCatalog=[];
+    QUARTZ_KEYS.forEach(id=>{
+      if(!state.shopCatalog.some(x=>x.id===id)){
+        const meta=(typeof DEFAULT_SHOP_CATALOG!=='undefined'?DEFAULT_SHOP_CATALOG:[]).find(x=>x.id===id);
+        if(meta) state.shopCatalog.push({...meta});
+      }
+    });
+    if(!Array.isArray(state.inventoryOrder)) state.inventoryOrder=[];
+    const known=[
+      ...QUARTZ_KEYS,
+      ...(state.shopCatalog||[]).map(x=>x.id),
+      'gacha_ticket','pomodoro_tomato'
+    ];
+    known.forEach(k=>{if(!state.inventoryOrder.includes(k))state.inventoryOrder.push(k);});
+    state.inventoryOrder=state.inventoryOrder.filter((k,i,a)=>a.indexOf(k)===i && known.includes(k));
+  }
+
+  function isQuartzKey(key){return QUARTZ_KEYS.includes(key);}
+  function getQuartzShopItem(key){return state.shopCatalog.find(x=>x.id===key) || (typeof DEFAULT_SHOP_CATALOG!=='undefined'?DEFAULT_SHOP_CATALOG.find(x=>x.id===key):null);}
+  function getInventoryCount(key){
+    if(isQuartzKey(key)) return Number(state.quartz[QUARTZ_META[key].stoneKey]||0);
+    return Number(state.consumables?.[key]||0);
+  }
+  function getInventoryMeta(key){
+    if(isQuartzKey(key)) return getQuartzShopItem(key);
+    return (state.shopCatalog||[]).find(x=>x.id===key);
+  }
+  function getQuartzImage(key){
+    return getQuartzShopItem(key)?.img || '';
+  }
+
+  function swapArrayItems(arr, sourceId, targetId){
+    const a=arr.findIndex(x=>String(x.id)===String(sourceId));
+    const b=arr.findIndex(x=>String(x.id)===String(targetId));
+    if(a<0 || b<0 || a===b) return false;
+    [arr[a],arr[b]]=[arr[b],arr[a]];
+    return true;
+  }
+  function swapInventoryOrder(sourceKey,targetKey){
+    const a=state.inventoryOrder.indexOf(sourceKey), b=state.inventoryOrder.indexOf(targetKey);
+    if(a<0 || b<0 || a===b) return false;
+    [state.inventoryOrder[a],state.inventoryOrder[b]]=[state.inventoryOrder[b],state.inventoryOrder[a]];
+    return true;
+  }
+
+  function clearDropTargets(container){
+    if(!container) return;
+    container.querySelectorAll('.drop-target').forEach(el=>el.classList.remove('drop-target'));
+  }
+  function bindDragDrop(container, group){
+    if(!container || container.dataset.dragBound==='1') return;
+    container.dataset.dragBound='1';
+    container.addEventListener('dragstart',e=>{
+      const card=e.target.closest('.item-card[data-drag-key]');
+      if(!card || card.dataset.dragDisabled==='1') return;
+      window.__blDrag={group,key:card.dataset.dragKey};
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',JSON.stringify({group,key:card.dataset.dragKey}));
+    });
+    container.addEventListener('dragover',e=>{
+      const card=e.target.closest('.item-card[data-drag-key]');
+      if(!card) return;
+      const data=window.__blDrag;
+      if(!data || data.group!==group || data.key===card.dataset.dragKey) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      clearDropTargets(container); card.classList.add('drop-target');
+    });
+    container.addEventListener('dragleave',e=>{
+      if(!container.contains(e.relatedTarget)) clearDropTargets(container);
+    });
+    container.addEventListener('drop',e=>{
+      const card=e.target.closest('.item-card[data-drag-key]');
+      const data=window.__blDrag;
+      clearDropTargets(container);
+      if(!card || !data || data.group!==group || data.key===card.dataset.dragKey) return;
+      e.preventDefault();
+      let changed=false;
+      if(group==='shop-items') changed=swapArrayItems(state.shopCatalog,data.key,card.dataset.dragKey);
+      else if(group==='shop-equipment') changed=swapArrayItems(state.shopEquipment,data.key,card.dataset.dragKey);
+      else if(group==='inventory-equipment') changed=swapArrayItems(state.equipmentInventory,data.key,card.dataset.dragKey);
+      else if(group==='inventory-items') changed=swapInventoryOrder(data.key,card.dataset.dragKey);
+      if(changed){
+        playSfx('click');
+        saveState();
+        showSiteToast('Đã đổi vị trí hai vật phẩm và lưu thứ tự.','success','↕️',2200);
+      }
+      window.__blDrag=null;
+    });
+    container.addEventListener('dragend',e=>{
+      container.querySelectorAll('.dragging').forEach(el=>el.classList.remove('dragging'));
+      clearDropTargets(container); window.__blDrag=null;
+    });
+  }
+
+  function dragCardMarkup(key,body,extraClass=''){
+    return `<div class="item-card is-draggable ${extraClass}" draggable="true" data-drag-key="${escapeHtml(String(key))}">\n      <span class="drag-handle" aria-hidden="true" title="Kéo để đổi vị trí">↕</span>${body}</div>`;
+  }
+
+  function quartzCard(key,shopMode=true){
+    const meta=QUARTZ_META[key], item=getQuartzShopItem(key);
+    if(!item) return '';
+    const count=getInventoryCount(key);
+    const tone=key==='quartz_basic'?'var(--cyan)':key==='quartz_pure'?'#bfdbfe':'#c084fc';
+    const body=`
+      <div class="quartz-edit-row">
+        <span class="quartz-type-pill">${meta.icon} ${meta.type}</span>
+        ${shopMode?`<button class="secondary" style="padding:2px 6px;font-size:10px;" onclick="openEditShopModal('${item.id}')">✏️ Sửa ảnh</button>`:''}
+      </div>
+      <div class="item-thumb-wrapper">
+        <img src="${escapeHtml(item.img||'')}" class="item-thumb-large ${meta.className}" alt="${escapeHtml(meta.name)}">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+        <b style="font-size:13px;">${escapeHtml(item.name||meta.name)}</b>
+        ${shopMode?`<span style="color:var(--gold);font-weight:800;white-space:nowrap;">${Number(item.price)||0} 🪙</span>`:`<span style="color:${tone};font-weight:800;white-space:nowrap;">x${count}</span>`}
+      </div>
+      <p style="font-size:10.5px;color:var(--subtext);margin:4px 0 8px;line-height:1.45;">${escapeHtml(item.desc||meta.desc)}</p>
+      ${shopMode?`<div style="display:flex;justify-content:flex-end;"><button style="width:100%;" onclick="buyConsumable('${item.id}')">Mua 1</button></div>`:`<div style="display:flex;gap:6px;margin-top:8px;"><button class="purple" style="flex:1;" onclick="switchTab(null,'tab-enhance')">Cường Hóa</button></div>`}
+    `;
+    return dragCardMarkup(key,body);
+  }
+
+  window.renderShopConsumables=function(){
+    ensureQuartzShopCatalog();
+    const qSection=document.getElementById('shopQuartzSection');
+    const grid=document.getElementById('shopConsumables');
+    if(!grid) return;
+    if(qSection) qSection.innerHTML=(currentConsumableFilter==='quartz'?'':QUARTZ_KEYS.map(k=>quartzCard(k,true)).join(''));
+
+    let list=(state.shopCatalog||[]).filter(item=>!isQuartzKey(item.id));
+    if(currentConsumableFilter==='quartz') list=QUARTZ_KEYS.map(getQuartzShopItem).filter(Boolean);
+    else if(currentConsumableFilter!=='all') list=list.filter(item=>item.category===currentConsumableFilter);
+
+    grid.innerHTML=list.map(item=>{
+      if(isQuartzKey(item.id)) return quartzCard(item.id,true);
+      const body=`
+        <div class="item-thumb-wrapper"><img src="${escapeHtml(item.img||'')}" class="item-thumb-large" alt="${escapeHtml(item.name||'Vật phẩm')}"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+          <b style="font-size:13px;">${escapeHtml(item.name||'Vật phẩm')}</b>
+          <button class="secondary" style="padding:2px 6px;font-size:10px;" onclick="openEditShopModal('${item.id}')">✏️ Sửa</button>
+        </div>
+        <p style="font-size:11px;color:var(--subtext);margin:4px 0 8px;">${escapeHtml(item.desc||'')}</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+          <span style="color:var(--gold);font-weight:700;">${Number(item.price)||0} 🪙</span>
+          <button onclick="buyConsumable('${item.id}')">Mua</button>
+        </div>`;
+      return dragCardMarkup(item.id,body);
+    }).join('') || `<p style="font-size:13px;color:var(--subtext);grid-column:1/-1;">Không có vật phẩm nào trong danh mục này.</p>`;
+    bindDragDrop(qSection,'shop-items');
+    bindDragDrop(grid,'shop-items');
+  };
+
+  window.renderShopEquipment=function(){
+    const grid=document.getElementById('shopEquipment'); if(!grid) return;
+    let list=[...(state.shopEquipment||[])];
+    if(currentEquipSlotFilter!=='all'){
+      list=currentEquipSlotFilter==='item'?list.filter(g=>String(g.slot||'').startsWith('item')):list.filter(g=>g.slot===currentEquipSlotFilter);
+    }
+    if(currentShopSort==='price_asc') list.sort((a,b)=>a.price-b.price);
+    else if(currentShopSort==='price_desc') list.sort((a,b)=>b.price-a.price);
+    else if(currentShopSort==='atk_desc') list.sort((a,b)=>(b.atk||0)-(a.atk||0));
+    else if(currentShopSort==='def_desc') list.sort((a,b)=>(b.def||0)-(a.def||0));
+    else if(currentShopSort==='hp_desc') list.sort((a,b)=>(b.bonusHp||0)-(a.bonusHp||0));
+
+    const dragDisabled=currentShopSort!=='default';
+    grid.innerHTML=list.length===0?`<p style="font-size:13px;color:var(--subtext);grid-column:1/-1;">Không tìm thấy trang bị phù hợp với bộ lọc.</p>`:list.map(g=>{
+      const rarity=RARITY_INFO[g.rarity||'common'];
+      const body=`
+        <div class="item-thumb-wrapper"><img src="${escapeHtml(g.img||'')}" class="item-thumb-large" alt="${escapeHtml(g.name||'Trang bị')}"></div>
+        <b style="color:${rarity.color};font-size:13px;">${escapeHtml(g.name||'Trang bị')}</b>
+        <small style="color:var(--subtext);">Loại: ${escapeHtml(SLOT_NAMES[g.slot]?.title||g.slot||'')} | ATK: +${g.atk||0} | DEF: +${g.def||0} | HP: +${g.bonusHp||0}</small>
+        <div class="tooltip-content">${generateCompareTooltipHtml(g)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;">
+          <span style="color:var(--gold);font-weight:700;">${Number(g.price)||0} 🪙</span>
+          <div style="display:flex;gap:4px;"><button onclick="buyShopEquipment(${g.id})">Mua</button><button class="danger" onclick="deleteShopItem(${g.id})">Xoá</button></div>
+        </div>`;
+      return `<div class="item-card is-draggable ${rarity.class}" draggable="${dragDisabled?'false':'true'}" data-drag-key="${escapeHtml(String(g.id))}" data-drag-disabled="${dragDisabled?'1':'0'}"${dragDisabled?' aria-disabled="true"':''}>${dragDisabled?'':'<span class="drag-handle" aria-hidden="true" title="Kéo để đổi vị trí">↕</span>'}${body}</div>`;
+    }).join('');
+    bindDragDrop(grid,'shop-equipment');
+    if(dragDisabled) grid.querySelectorAll('[data-drag-disabled="1"]').forEach(el=>el.classList.remove('is-draggable'));
+  };
+
+  window.buyConsumable=function(itemKey){
+    ensureQuartzShopCatalog();
+    const item=state.shopCatalog.find(x=>x.id===itemKey); if(!item) return;
+    const stats=getHeroStats();
+    let finalPrice=Number(item.price)||0;
+    if(stats.effects.includes('thrift')) finalPrice=Math.round(finalPrice*0.8);
+    if(hasRune('FEHU')) finalPrice=Math.round(finalPrice*0.9);
+    if(state.coins<finalPrice) return alert('Bạn không đủ Vàng để mua!');
+    state.coins-=finalPrice;
+    if(isQuartzKey(itemKey)){
+      const sk=QUARTZ_META[itemKey].stoneKey;
+      state.quartz[sk]=(state.quartz[sk]||0)+1;
+    }else{
+      state.consumables[itemKey]=(state.consumables[itemKey]||0)+1;
+    }
+    if(!state.inventoryOrder.includes(itemKey))state.inventoryOrder.push(itemKey);
+    playSfx('buy');
+    showRewardPanel('🛒 Mua Thành Công!',`${item.name} đã được thêm vào Túi Đồ.`,'🪙','REWARD',[{label:'Vật phẩm',value:'+1',icon:'🎁'},{label:'Đã trả',value:`-${finalPrice} Vàng`,icon:'🪙'}],item.img||'');
+    saveState();
+  };
+
+  window.deleteConsumable=function(itemKey){
+    playSfx('click');
+    if(isQuartzKey(itemKey)) return showSiteToast('Thạch Anh là vật liệu cường hóa riêng, không xóa trực tiếp khỏi Túi Đồ.','warning','💎',2600);
+    if(itemKey==='pomodoro_tomato') return sellPomodoroTomato();
+    if(confirm('Xóa toàn bộ số lượng của vật phẩm này khỏi Túi Đồ?')){
+      state.consumables[itemKey]=0; saveState();
+    }
+  };
+
+  function inventoryCard(key){
+    const meta=getInventoryMeta(key); if(!meta) return '';
+    const count=getInventoryCount(key); if(count<=0) return '';
+    if(isQuartzKey(key)) return quartzCard(key,false);
+    if(key==='pomodoro_tomato'){
+      const body=`
+        <div class="item-thumb-wrapper"><div style="font-size:72px;filter:drop-shadow(0 0 16px rgba(244,63,94,.35));">🍅</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;"><b style="font-size:13px;">Cà Chua Pomodoro</b><span style="color:var(--red);font-weight:800;">x${count}</span></div>
+        <small style="color:var(--subtext);margin:4px 0;">Ăn để hồi 10% HP tối đa. Bán được 5 🪙/quả.</small>
+        <div style="display:flex;gap:6px;margin-top:8px;"><button style="flex:1;" onclick="useConsumable('pomodoro_tomato')">Ăn 1 quả</button><button class="orange" style="flex:1;" onclick="sellPomodoroTomato()">Bán tất cả</button></div>`;
+      return dragCardMarkup(key,body,'border-legendary');
+    }
+    if(key==='gacha_ticket'){
+      const body=`
+        <div class="item-thumb-wrapper"><div style="font-size:64px;">🎟️</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;"><b>Vé Gacha</b><span style="color:var(--gold);font-weight:800;">x${count}</span></div>
+        <small style="color:var(--subtext);margin:4px 0;">Dùng để quay Gacha. Giá Shop: 150 🪙.</small>
+        <button class="purple" style="width:100%;margin-top:7px;" onclick="switchTab(null,'tab-gacha')">Mở Gacha</button>`;
+      return dragCardMarkup(key,body,'border-legendary');
+    }
+    const body=`
+      <div class="item-thumb-wrapper"><img src="${escapeHtml(meta.img||'')}" class="item-thumb-large" alt="${escapeHtml(meta.name||key)}"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;"><b style="font-size:13px;">${escapeHtml(meta.name||key)}</b><span style="color:var(--primary);font-weight:800;">x${count}</span></div>
+      <div style="display:flex;gap:6px;margin-top:8px;"><button style="flex:1;" onclick="useConsumable('${key}')">Dùng / Mở</button><button class="danger" style="padding:6px 10px;" onclick="deleteConsumable('${key}')">Xoá</button></div>`;
+    return dragCardMarkup(key,body);
+  }
+
+  function renderInventoryItems(){
+    ensureQuartzShopCatalog();
+    const grid=document.getElementById('invConsumables'); if(!grid) return;
+    const visible=[]; const seen=new Set();
+    state.inventoryOrder.forEach(k=>{if(!seen.has(k)){seen.add(k);const h=inventoryCard(k);if(h)visible.push(h);}});
+    // Catch any legacy item not yet present in order.
+    Object.keys(state.consumables||{}).forEach(k=>{if(!seen.has(k)){const h=inventoryCard(k);if(h)visible.push(h);}});
+    QUARTZ_KEYS.forEach(k=>{if(!seen.has(k)){const h=inventoryCard(k);if(h)visible.unshift(h);}});
+    grid.innerHTML=visible.join('')||`<p style="color:var(--subtext);font-size:13px;">Túi đồ rỗng.</p>`;
+    bindDragDrop(grid,'inventory-items');
+  }
+
+  function renderInventoryEquipment(){
+    const grid=document.getElementById('invEquipment'); if(!grid) return;
+    const list=state.equipmentInventory||[];
+    grid.innerHTML=list.length===0?`<p style="color:var(--subtext);font-size:13px;">Không có trang bị trong túi đồ. Hãy rèn ở Xưởng rồi mua từ Shop!</p>`:list.map(item=>{
+      const rarity=RARITY_INFO[item.rarity||'common'];
+      const body=`
+        <div class="item-thumb-wrapper"><img src="${escapeHtml(item.img||'')}" class="item-thumb-large" alt="${escapeHtml(item.name||'Trang bị')}"></div>
+        <b style="color:${rarity.color};font-size:13px;">${escapeHtml(item.name||'Trang bị')}</b>
+        <small style="color:var(--subtext);">Loại: ${escapeHtml(SLOT_NAMES[item.slot]?.title||item.slot||'')} | Phẩm: ${escapeHtml(rarity.name)}</small>
+        <div class="tooltip-content">${generateCompareTooltipHtml(item)}</div>
+        <div style="display:flex;gap:6px;margin-top:10px;"><button class="purple" style="flex:1;" onclick="equipItem(${item.id})">Mặc</button><button class="orange" style="flex:1;" onclick="sellEquipment(${item.id})">Bán (+EXP)</button><button class="danger" style="padding:6px 10px;" onclick="deleteEquipment(${item.id})">Xoá</button></div>`;
+      return dragCardMarkup(String(item.id),body,rarity.class);
+    }).join('');
+    bindDragDrop(grid,'inventory-equipment');
+  }
+
+  // make deletion/editing of core quartz consistent with the three-item shop.
+  const oldDeleteShopConsumable=window.deleteShopConsumable;
+  window.deleteShopConsumable=function(){
+    const id=document.getElementById('editShopKey')?.value||'';
+    if(isQuartzKey(id)){
+      closeEditShopModal();
+      showSiteToast('Ba loại Thạch Anh là vật liệu cốt lõi nên không xóa khỏi Shop. Bạn vẫn có thể sửa tên, giá, ảnh và mô tả.','warning','💎',3200);
+      return;
+    }
+    if(oldDeleteShopConsumable) return oldDeleteShopConsumable();
+  };
+
+  // Keep all three quartz images in sync between Shop and inventory: inventory reads the same catalog URL.
+  const oldRender=window.render;
+  window.render=function(){
+    ensureQuartzShopCatalog();
+    if(typeof oldRender==='function') oldRender();
+    renderInventoryItems();
+    renderInventoryEquipment();
+    // old render may have reset the Gacha banner; repaint it after the UI is ready.
+    if(typeof renderGacha==='function') renderGacha();
+  };
+
+  // Repaint the Gacha banner without global dimming. The source image is shown at full CSS opacity.
+  const oldRenderGacha=window.renderGacha;
+  window.renderGacha=function(){
+    if(typeof oldRenderGacha==='function') oldRenderGacha();
+    const b=document.getElementById('gachaBanner');
+    if(b){
+      const url=String(state.gachaCoverUrl||'').trim();
+      b.style.backgroundImage=url?`url('${url.replace(/'/g,"%27")}')`:'linear-gradient(180deg,#101a31,#090f1c)';
+      b.style.backgroundSize='cover';
+      b.style.backgroundPosition='center center';
+      b.style.backgroundRepeat='no-repeat';
+      b.style.opacity='1';
+      b.style.filter='none';
+    }
+  };
+
+  // Ensure the new catalog/order is active on first load and after any saved-state render.
+  ensureQuartzShopCatalog();
+  window.render();
+})();
+</script>
+
 <script src="./js/onboarding.js" defer></script>
 </body>
 </html>
