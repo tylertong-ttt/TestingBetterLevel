@@ -434,6 +434,54 @@
     .border-legendary { border-color: var(--rarity-legendary) !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
     .border-mythic { border-color: var(--rarity-mythic) !important; box-shadow: 0 0 18px rgba(244, 63, 94, 0.4); }
 
+
+
+    /* ============================================================
+       DRAG & DROP — SHOP + INVENTORY ITEM ORDER
+       Chỉ bổ sung khả năng kéo-thả, không thay đổi layout cũ.
+       ============================================================ */
+    .item-card.drag-sort-enabled {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
+    }
+    .item-card.drag-sort-enabled:active { cursor: grabbing; }
+    .item-card.dragging-item {
+      opacity: .42;
+      transform: scale(.985);
+      box-shadow: 0 0 0 2px rgba(99,102,241,.36), 0 10px 24px rgba(0,0,0,.28);
+    }
+    .item-card.drag-over-item {
+      transform: translateY(-3px);
+      box-shadow: 0 0 0 2px rgba(168,85,247,.45), 0 12px 28px rgba(99,102,241,.18);
+    }
+    .item-card .drag-hint {
+      position:absolute;
+      top:7px;
+      left:7px;
+      z-index:4;
+      width:23px;
+      height:23px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:7px;
+      color:rgba(255,255,255,.72);
+      background:rgba(5,10,20,.58);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:12px;
+      line-height:1;
+      pointer-events:none;
+      opacity:.62;
+      backdrop-filter:blur(6px);
+    }
+    .item-grid.drag-sorting-active .item-card.drag-sort-enabled { transition:none; }
+    @media (pointer: coarse) {
+      .item-card .drag-hint { opacity:.78; }
+    }
+
     /* Map & Boss Viewport */
     .map-viewport {
       width: 100%; height: 370px; border-radius: 16px; position: relative; overflow: hidden;
@@ -3462,6 +3510,15 @@
           }
         });
     }
+    /* ============================================================
+       Migration cho thứ tự kéo-thả Shop / Túi Đồ.
+       Không ảnh hưởng dữ liệu vật phẩm hiện tại.
+       ============================================================ */
+    if (!Array.isArray(state.shopConsumableOrder)) state.shopConsumableOrder = [];
+    if (!Array.isArray(state.shopEquipmentOrder)) state.shopEquipmentOrder = [];
+    if (!Array.isArray(state.inventoryConsumableOrder)) state.inventoryConsumableOrder = [];
+    if (!Array.isArray(state.inventoryEquipmentOrder)) state.inventoryEquipmentOrder = [];
+
     if (!state.consumables) state.consumables = {};
     if (typeof state.consumables.pomodoro_tomato !== 'number') state.consumables.pomodoro_tomato = 0;
     if (typeof state.consumables.gacha_ticket !== 'number') state.consumables.gacha_ticket = 0;
@@ -5222,6 +5279,260 @@ window.BetterLevelProfile = {
       localStorage.setItem(STORAGE_KEY_V8, JSON.stringify(state));
     }
 
+    /* ============================================================
+       HỆ THỐNG KÉO-THẢ VỊ TRÍ VẬT PHẨM
+       - PC: HTML5 Drag & Drop
+       - Mobile/tablet: Pointer Events + long-press
+       - Thứ tự lưu riêng cho Shop/Túi Đồ
+       ============================================================ */
+    let dragDropSuppressClickUntil = 0;
+
+    function normalizeDragOrder(order, ids) {
+      const valid = new Set(ids.map(String));
+      const cleaned = (Array.isArray(order) ? order : [])
+        .map(String)
+        .filter(id => valid.has(id));
+
+      const seen = new Set(cleaned);
+      ids.forEach(id => {
+        const sid = String(id);
+        if (!seen.has(sid)) cleaned.push(sid);
+      });
+      return cleaned;
+    }
+
+    function getContainerItemIds(container) {
+      if (!container) return [];
+      return [...container.children]
+        .filter(el => el && el.dataset && el.dataset.dragSortId)
+        .map(el => String(el.dataset.dragSortId));
+    }
+
+    function restoreContainerOrder(container, stateKey) {
+      if (!container || !Array.isArray(state[stateKey])) return;
+
+      const cards = [...container.children]
+        .filter(el => el && el.dataset && el.dataset.dragSortId);
+      if (cards.length < 2) return;
+
+      const byId = new Map(cards.map(card => [String(card.dataset.dragSortId), card]));
+      const desired = normalizeDragOrder(state[stateKey], cards.map(card => card.dataset.dragSortId));
+
+      desired.forEach(id => {
+        const card = byId.get(String(id));
+        if (card) container.appendChild(card);
+      });
+
+      state[stateKey] = normalizeDragOrder(
+        state[stateKey],
+        getContainerItemIds(container)
+      );
+    }
+
+    function saveContainerOrder(container, stateKey) {
+      if (!container) return;
+      const ids = getContainerItemIds(container);
+      if (!ids.length) return;
+      state[stateKey] = normalizeDragOrder(state[stateKey], ids);
+      saveState();
+    }
+
+    function clearDragVisuals(container) {
+      if (!container) return;
+      container.classList.remove('drag-sorting-active');
+      container.querySelectorAll('.dragging-item, .drag-over-item').forEach(el => {
+        el.classList.remove('dragging-item', 'drag-over-item');
+      });
+    }
+
+    function addDragHint(card) {
+      if (!card || card.querySelector('.drag-hint')) return;
+      const hint = document.createElement('span');
+      hint.className = 'drag-hint';
+      hint.textContent = '⋮⋮';
+      hint.title = 'Kéo để đổi vị trí';
+      hint.setAttribute('aria-hidden', 'true');
+      card.appendChild(hint);
+    }
+
+    function bindSortableContainer(containerId, stateKey, options = {}) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const respectSort = options.respectSort !== false;
+      if (respectSort) restoreContainerOrder(container, stateKey);
+      const cards = [...container.children]
+        .filter(el => el && el.dataset && el.dataset.dragSortId);
+
+      if (!cards.length) return;
+
+      container.classList.add('drag-sort-container');
+
+      cards.forEach(card => {
+        if (card.dataset.dragSortBound === '1') return;
+        card.dataset.dragSortBound = '1';
+        card.classList.add('drag-sort-enabled');
+        card.draggable = true;
+        addDragHint(card);
+
+        card.addEventListener('dragstart', event => {
+          if (event.target.closest('button, input, select, textarea, a')) {
+            event.preventDefault();
+            return;
+          }
+          const id = String(card.dataset.dragSortId || '');
+          if (!id) return;
+
+          card._dragMode = 'native';
+          container._draggedCard = card;
+          container._draggedId = id;
+          container.classList.add('drag-sorting-active');
+          card.classList.add('dragging-item');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', id);
+        });
+
+        card.addEventListener('dragover', event => {
+          if (!container._draggedCard || container._draggedCard === card) return;
+          event.preventDefault();
+          const rect = card.getBoundingClientRect();
+          const vertical = event.clientY < rect.top + rect.height / 2;
+          card.classList.add('drag-over-item');
+          if (vertical) container.insertBefore(container._draggedCard, card);
+          else container.insertBefore(container._draggedCard, card.nextSibling);
+        });
+
+        card.addEventListener('dragleave', () => {
+          card.classList.remove('drag-over-item');
+        });
+
+        card.addEventListener('drop', event => {
+          event.preventDefault();
+          if (!container._draggedCard) return;
+          clearDragVisuals(container);
+          saveContainerOrder(container, stateKey);
+          dragDropSuppressClickUntil = Date.now() + 450;
+          container._draggedCard = null;
+          container._draggedId = null;
+        });
+
+        card.addEventListener('dragend', () => {
+          const hadDrag = !!container._draggedCard;
+          clearDragVisuals(container);
+          if (hadDrag) saveContainerOrder(container, stateKey);
+          container._draggedCard = null;
+          container._draggedId = null;
+        });
+
+        /* Mobile / touch fallback */
+        card.addEventListener('pointerdown', event => {
+          if (event.pointerType === 'mouse') return;
+          if (event.target.closest('button, input, select, textarea, a')) return;
+
+          const startX = event.clientX;
+          const startY = event.clientY;
+          let longPressTriggered = false;
+          let moved = false;
+
+          const beginTouchDrag = () => {
+            if (moved || !document.body.contains(card)) return;
+            longPressTriggered = true;
+            container._draggedCard = card;
+            container._draggedId = String(card.dataset.dragSortId || '');
+            container._touchPointerId = event.pointerId;
+            container.classList.add('drag-sorting-active');
+            card.classList.add('dragging-item');
+            try { card.setPointerCapture(event.pointerId); } catch (_) {}
+          };
+
+          const timer = setTimeout(beginTouchDrag, 360);
+
+          const onMove = moveEvent => {
+            if (moveEvent.pointerId !== event.pointerId) return;
+            const dx = moveEvent.clientX - startX;
+            const dy = moveEvent.clientY - startY;
+            if (!longPressTriggered && Math.hypot(dx, dy) > 9) {
+              moved = true;
+              clearTimeout(timer);
+              cleanup();
+              return;
+            }
+            if (!longPressTriggered || container._draggedCard !== card) return;
+
+            moveEvent.preventDefault();
+            const target = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
+            const targetCard = target && target.closest
+              ? target.closest('.item-card[data-drag-sort-id]')
+              : null;
+
+            if (!targetCard || targetCard === card || targetCard.parentElement !== container) return;
+
+            container.querySelectorAll('.drag-over-item').forEach(el => {
+              if (el !== targetCard) el.classList.remove('drag-over-item');
+            });
+            targetCard.classList.add('drag-over-item');
+
+            const rect = targetCard.getBoundingClientRect();
+            const before = moveEvent.clientY < rect.top + rect.height / 2;
+            if (before) container.insertBefore(card, targetCard);
+            else container.insertBefore(card, targetCard.nextSibling);
+          };
+
+          const finish = finishEvent => {
+            if (finishEvent && finishEvent.pointerId !== event.pointerId) return;
+            clearTimeout(timer);
+            if (longPressTriggered && container._draggedCard === card) {
+              clearDragVisuals(container);
+              saveContainerOrder(container, stateKey);
+              dragDropSuppressClickUntil = Date.now() + 650;
+              try { card.releasePointerCapture(event.pointerId); } catch (_) {}
+              container._draggedCard = null;
+              container._draggedId = null;
+            }
+            cleanup();
+          };
+
+          const cleanup = () => {
+            clearTimeout(timer);
+            window.removeEventListener('pointermove', onMove, { passive:false });
+            window.removeEventListener('pointerup', finish, { passive:false });
+            window.removeEventListener('pointercancel', finish, { passive:false });
+          };
+
+          window.addEventListener('pointermove', onMove, { passive:false });
+          window.addEventListener('pointerup', finish, { passive:false });
+          window.addEventListener('pointercancel', finish, { passive:false });
+        }, { passive:true });
+      });
+
+      /* Mỗi lần render lại, những item mới sẽ được tự động bind. */
+      if (respectSort) {
+        state[stateKey] = normalizeDragOrder(
+          state[stateKey],
+          getContainerItemIds(container)
+        );
+      }
+    }
+
+    function setupAllItemDragAndDrop() {
+      bindSortableContainer('shopConsumables', 'shopConsumableOrder');
+      bindSortableContainer(
+        'shopEquipment',
+        'shopEquipmentOrder',
+        { respectSort: currentShopSort === 'default' }
+      );
+      bindSortableContainer('invConsumables', 'inventoryConsumableOrder');
+      bindSortableContainer('invEquipment', 'inventoryEquipmentOrder');
+    }
+
+    document.addEventListener('click', event => {
+      if (Date.now() >= dragDropSuppressClickUntil) return;
+      const card = event.target.closest && event.target.closest('.item-card[data-drag-sort-id]');
+      if (!card) return;
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
+
     function renderShopConsumables() {
       let filtered = state.shopCatalog;
       if (currentConsumableFilter !== 'all') {
@@ -5232,7 +5543,7 @@ window.BetterLevelProfile = {
         const quartzKey = QUARTZ_ID_TO_KEY[item.id];
         const quartzStyle = quartzKey ? ` style="${getQuartzImageStyle(quartzKey)}"` : '';
         return `
-        <div class="item-card">
+        <div class="item-card" data-drag-sort-id="${item.id}">
           <div class="item-thumb-wrapper">
             <img src="${item.img}" class="item-thumb-large"${quartzStyle}>
           </div>
@@ -5272,7 +5583,7 @@ window.BetterLevelProfile = {
         : list.map(g => {
           const rarity = RARITY_INFO[g.rarity || 'common'];
           return `
-            <div class="item-card has-tooltip ${rarity.class}">
+            <div class="item-card has-tooltip ${rarity.class}" data-drag-sort-id="${g.id}">
               <div class="item-thumb-wrapper">
                 <img src="${g.img}" class="item-thumb-large">
               </div>
@@ -5557,7 +5868,7 @@ window.BetterLevelProfile = {
       // Thạch anh hiển thị trong kho
       if ((state.quartz.basic || 0) > 0) {
         invConsHtml += `
-          <div class="item-card">
+          <div class="item-card" data-drag-sort-id="quartz_basic">
             <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('basic', 250)}" style="${getQuartzImageStyle('basic')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Sơ Cấp</b><span style="color:var(--primary); font-weight:800;">x${state.quartz.basic}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv 0 -> +3.</small>
@@ -5566,7 +5877,7 @@ window.BetterLevelProfile = {
       }
       if ((state.quartz.pure || 0) > 0) {
         invConsHtml += `
-          <div class="item-card">
+          <div class="item-card" data-drag-sort-id="quartz_pure">
             <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('pure', 250)}" style="${getQuartzImageStyle('pure')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Tinh Khiết</b><span style="color:var(--cyan); font-weight:800;">x${state.quartz.pure}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +4 -> +7.</small>
@@ -5575,7 +5886,7 @@ window.BetterLevelProfile = {
       }
       if ((state.quartz.chaos || 0) > 0) {
         invConsHtml += `
-          <div class="item-card">
+          <div class="item-card" data-drag-sort-id="quartz_chaos">
             <div class="item-thumb-wrapper"><img src="${getQuartzImageUrl('chaos', 250)}" style="${getQuartzImageStyle('chaos')}" class="item-thumb-large"></div>
             <div style="display:flex; justify-content:space-between;"><b>Thạch Anh Hỗn Độn</b><span style="color:var(--red); font-weight:800;">x${state.quartz.chaos}</span></div>
             <small style="color:var(--subtext); margin:4px 0;">Nguyên liệu cường hóa ô Lv +8 -> +10.</small>
@@ -5586,7 +5897,7 @@ window.BetterLevelProfile = {
       const gachaTicketCount = state.consumables.gacha_ticket || 0;
       if (gachaTicketCount > 0) {
         invConsHtml += `
-          <div class="item-card border-legendary">
+          <div class="item-card border-legendary" data-drag-sort-id="gacha_ticket">
             <div class="item-thumb-wrapper"><div style="font-size:64px;">🎟️</div></div>
             <div style="display:flex;justify-content:space-between;align-items:center;"><b>Vé Gacha</b><span style="color:var(--gold);font-weight:800;">x${gachaTicketCount}</span></div>
             <small style="color:var(--subtext);margin:4px 0;">Dùng để quay Gacha. Giá Shop: 150 🪙.</small>
@@ -5597,7 +5908,7 @@ window.BetterLevelProfile = {
       const tomatoCount = state.consumables.pomodoro_tomato || 0;
       if (tomatoCount > 0) {
         invConsHtml += `
-          <div class="item-card border-legendary">
+          <div class="item-card border-legendary" data-drag-sort-id="pomodoro_tomato">
             <div class="item-thumb-wrapper"><div style="font-size:72px; filter:drop-shadow(0 0 16px rgba(244,63,94,.35));">🍅</div></div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <b style="font-size:13px;">Cà Chua Pomodoro</b>
@@ -5619,7 +5930,7 @@ window.BetterLevelProfile = {
           const meta = state.shopCatalog.find(x => x.id === k);
           if (meta) {
             invConsHtml += `
-              <div class="item-card">
+              <div class="item-card" data-drag-sort-id="${k}">
                 <div class="item-thumb-wrapper"><img src="${meta.img}" class="item-thumb-large"></div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <b style="font-size:13px;">${meta.name}</b>
@@ -5642,7 +5953,7 @@ window.BetterLevelProfile = {
         : state.equipmentInventory.map(item => {
           const rarity = RARITY_INFO[item.rarity || 'common'];
           return `
-            <div class="item-card has-tooltip ${rarity.class}">
+            <div class="item-card has-tooltip ${rarity.class}" data-drag-sort-id="${item.id}">
               <div class="item-thumb-wrapper">
                 <img src="${item.img}" class="item-thumb-large">
               </div>
@@ -5659,6 +5970,9 @@ window.BetterLevelProfile = {
             </div>
           `;
         }).join('');
+
+      // Khôi phục + bind thứ tự kéo-thả sau mỗi lần render.
+      setupAllItemDragAndDrop();
 
       // Background video / image — dùng một layer cố định để căn giữa ổn định trên PC + mobile
       const bgVideo = document.getElementById('bgVideo');
@@ -5748,6 +6062,11 @@ window.BetterLevelProfile = {
           if (!state.activeBuffs) state.activeBuffs = {};
           if (!state.consumables) state.consumables = {};
           if (!state.quartz) state.quartz = {basic:0,pure:0,chaos:0};
+          if (!Array.isArray(state.shopConsumableOrder)) state.shopConsumableOrder=[];
+          if (!Array.isArray(state.shopEquipmentOrder)) state.shopEquipmentOrder=[];
+          if (!Array.isArray(state.inventoryConsumableOrder)) state.inventoryConsumableOrder=[];
+          if (!Array.isArray(state.inventoryEquipmentOrder)) state.inventoryEquipmentOrder=[];
+
           if (!state.shopCatalog) state.shopCatalog = DEFAULT_SHOP_CATALOG;
           else if(!state.shopCatalog.some(x=>x.id==='gacha_ticket')){const ticketMeta=DEFAULT_SHOP_CATALOG.find(x=>x.id==='gacha_ticket');if(ticketMeta)state.shopCatalog.push({...ticketMeta});}
           if (typeof state.consumables.pomodoro_tomato !== 'number') state.consumables.pomodoro_tomato = 0;
