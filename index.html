@@ -2056,6 +2056,35 @@
   .battle-log{max-height:155px;}
 }
 
+
+    /* FINAL — GACHA BANNER PROFESSIONAL WIDE OVERRIDE */
+    .gacha-banner{
+      width:calc(100% + 40px);
+      max-width:none;
+      margin-left:-20px;
+      min-height:250px;
+      aspect-ratio:5.6 / 1;
+      padding:24px 28px;
+      border-radius:18px;
+      background-size:cover;
+      background-position:center center;
+    }
+    .gacha-banner-content{
+      width:min(760px,100%);
+      max-width:760px;
+    }
+
+    @media(max-width:700px){
+      .gacha-banner{
+        width:calc(100% + 24px);
+        margin-left:-12px;
+        min-height:185px;
+        aspect-ratio:4.5 / 1;
+        padding:16px 14px;
+        border-radius:15px;
+      }
+      .gacha-banner-content{max-width:100%;}
+    }
 </style>
 </head>
 <body>
