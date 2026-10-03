@@ -3224,6 +3224,38 @@
     let audioCtx = null;
     let audioEnabled = true;
 
+    /* Requested external SFX — only these five requested sounds use audio files.
+       Put the files in ./audio/ when uploading this project to GitHub. */
+    const FILE_SFX = {
+      open_chest: './audio/Openchest.mp3',
+      gacha_reward: './audio/gacha.mp3',
+      item_heal: './audio/healingspell.mp3',
+      swordcut: './audio/swordcut.mp3',
+      item_normal: './audio/normalitem.mp3'
+    };
+    const fileSfxCache = {};
+
+    function playFileSfx(type) {
+      if (!audioEnabled) return false;
+      const src = FILE_SFX[type];
+      if (!src) return false;
+      try {
+        let audio = fileSfxCache[type];
+        if (!audio) {
+          audio = new Audio(src);
+          audio.preload = 'auto';
+          fileSfxCache[type] = audio;
+        }
+        audio.currentTime = 0;
+        const promise = audio.play();
+        if (promise && typeof promise.catch === 'function') promise.catch(() => {});
+        return true;
+      } catch (e) {
+        console.warn(e);
+        return false;
+      }
+    }
+
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -3231,6 +3263,10 @@
 
     function playSfx(type) {
       if (!audioEnabled) return;
+      if (FILE_SFX[type]) {
+        playFileSfx(type);
+        return;
+      }
       initAudio();
       try {
         const now = audioCtx.currentTime;
@@ -4920,10 +4956,10 @@ window.BetterLevelProfile = {
       saveState();
     }
 
-    function healHero(amount) {
+    function healHero(amount, soundType='heal') {
       const maxHp = getHeroMaxHp();
       state.heroHp = Math.min(maxHp, state.heroHp + amount);
-      playSfx('heal');
+      playSfx(soundType);
       saveState();
     }
 
@@ -5060,7 +5096,8 @@ window.BetterLevelProfile = {
       map.hp=Math.max(0,map.hp-finalDmg);
       processBossHitEquipmentBonuses(map,stats,previousBossHp,map.hp);
       const bossImgElem=document.getElementById('bossImgDisplay'); showFloatingCombatText(bossImgElem,finalDmg,isCrit?'crit':'normal');
-      if(isCrit){playSfx('crit');logBattle(`🔥 <b style='color:#f43f5e'>CHÍ MẠNG!</b> Bạn gây <b style='color:#f43f5e'>${finalDmg}</b> lên Boss.`);} else {playSfx('hit');logBattle(`⚔️ Bạn tấn công gây <b>${finalDmg}</b> lên Boss.`);}
+      playSfx('swordcut');
+      if(isCrit){logBattle(`🔥 <b style='color:#f43f5e'>CHÍ MẠNG!</b> Bạn gây <b style='color:#f43f5e'>${finalDmg}</b> lên Boss.`);} else {logBattle(`⚔️ Bạn tấn công gây <b>${finalDmg}</b> lên Boss.`);}
 
       if(stats.effects.includes('berserk_sword') && map.hp>0 && Math.random()<0.30){
         const extraStrike=Math.max(1,Math.round(finalDmg*0.60));
@@ -5071,10 +5108,11 @@ window.BetterLevelProfile = {
       }
 
       let lifeStealPercent=0;
+      let itemLifeStealActive=false;
       if(stats.effects.includes('vampiric_edge')) lifeStealPercent+=0.15;
       if(hasRune('NAUDIZ') && (state.heroHp/getHeroMaxHp())<0.3) lifeStealPercent+=0.15;
-      if(state.activeBuffs && state.activeBuffs.vampiricDraughtHits>0){lifeStealPercent+=0.20;state.activeBuffs.vampiricDraughtHits--;}
-      if(lifeStealPercent>0) healHero(Math.round(finalDmg*lifeStealPercent));
+      if(state.activeBuffs && state.activeBuffs.vampiricDraughtHits>0){lifeStealPercent+=0.20;state.activeBuffs.vampiricDraughtHits--;itemLifeStealActive=true;}
+      if(lifeStealPercent>0) healHero(Math.round(finalDmg*lifeStealPercent),itemLifeStealActive?'item_heal':'heal');
       if(lotteryOutcome==='heal') {
         const heal=Math.max(1,Math.round(getHeroMaxHp()*0.20));
         healHero(heal);
@@ -5083,7 +5121,7 @@ window.BetterLevelProfile = {
         state.coins=(state.coins||0)+50;
         logBattle(`🎲 <b style="color:#fbbf24">[XỔ SỐ]</b> May mắn — +50 Vàng.`);
       }
-      if(state.activeBuffs && state.activeBuffs.saplingRenewalExpires>Date.now()) healHero(10);
+      if(state.activeBuffs && state.activeBuffs.saplingRenewalExpires>Date.now()) healHero(10,'item_heal');
       if(state.activeBuffs && state.activeBuffs.eyeDiscernmentHits>0) state.activeBuffs.eyeDiscernmentHits--;
 
       if(map.hp>0){
@@ -5157,7 +5195,7 @@ window.BetterLevelProfile = {
         showRewardPanel('🏆 Đại Thắng!',`Bạn đã chinh phục ${map.bossName}.`,'🏆','LEGENDARY',[
           {label:'EXP',value:`+${rewExp}`,icon:'⭐'},
           {label:'Vàng',value:`+${rewCoin}`,icon:'🪙'},
-          {label:'Rương',value:`+1 ${state.shopCatalog.find(x=>x.id===dropChest)?.name||'Rương'}`,icon:'📦'},
+          {label:'Rương',value:`+1 ${state.shopCatalog.find(x=>x.id===dropChest)?.name||'Rương'}`,icon:'📦',image:state.shopCatalog.find(x=>x.id===dropChest)?.img||''},
           {label:'Thạch Anh Hỗn Độn',value:'+1',icon:'🔮'}
         ]);
       }
@@ -5411,9 +5449,7 @@ window.BetterLevelProfile = {
     }
 
     function gachaRevealSound(rarity){
-      const key=String(rarity||'').toLowerCase();
-      const sound=key==='rune'?'gacha_reveal_rune':key==='legendary'?'gacha_reveal_legendary':key==='epic'?'gacha_reveal_epic':key==='rare'?'gacha_reveal_rare':'gacha_reveal_common';
-      setTimeout(()=>playSfx(sound),420);
+      setTimeout(()=>playSfx('gacha_reward'),420);
     }
 
     function showRewardPanel(title,desc,icon='🎁',rarity='REWARD',rows=[],imageUrl=''){
@@ -5452,7 +5488,6 @@ window.BetterLevelProfile = {
       } else if(isChest){
         panel.classList.add('chest-reveal');
         emitRewardParticles(panel,'chest',14);
-        setTimeout(()=>playSfx('chest_reveal'),320);
       } else {
         playSfx('reward');
       }
@@ -5535,9 +5570,9 @@ window.BetterLevelProfile = {
     function getRewardImageByName(name){
       if(!name) return '';
       const raw=String(name).trim();
-      const hit=(state.shopCatalog||[]).find(x=>x.name===raw || raw.includes(x.name) || x.name.includes(raw));
+      const hit=(state.shopCatalog||[]).find(x=>String(x?.name||'').trim()===raw);
       if(hit&&hit.img) return hit.img;
-      const eq=[...(state.equipmentInventory||[]),...(state.shopEquipment||[])].find(x=>x.name===raw || raw.includes(x.name) || x.name.includes(raw));
+      const eq=[...(state.equipmentInventory||[]),...(state.shopEquipment||[])].find(x=>String(x?.name||'').trim()===raw);
       if(eq&&eq.img) return eq.img;
       const runeKey=Object.keys(RUNE_DATA||{}).find(k=>raw.includes(k) || raw.includes(RUNE_DATA[k]?.name||''));
       if(runeKey){
@@ -5687,7 +5722,7 @@ window.BetterLevelProfile = {
       const meta=state.shopCatalog.find(x=>x.id===itemKey);
       const rows=[];
       let goldBonus=0,expBonus=0,highlightImage=meta?.img||'';
-      playSfx('chest');
+      playSfx('open_chest');
 
       if(itemKey==='chest_wood'){
         goldBonus=20+Math.floor(Math.random()*21); expBonus=15+Math.floor(Math.random()*16);
@@ -5763,18 +5798,25 @@ window.BetterLevelProfile = {
       saveState();
     }
 
+    const CONSUMABLE_DIRECT_HEAL_KEYS = new Set(['pomodoro_tomato','flask_vitality','crimson_elixir','phoenix_elixir']);
+
     function useConsumable(itemKey) {
       if(!state.consumables[itemKey] || state.consumables[itemKey]<=0) return;
       state.consumables[itemKey]--; const now=Date.now(); const maxHp=getHeroMaxHp();
       const durMul=hasRune('ISAZ')?1.5:1;
+      if(itemKey.startsWith('chest_')){
+        // Chest uses its dedicated Openchest.mp3 in openChestWithPanel().
+      } else if(!CONSUMABLE_DIRECT_HEAL_KEYS.has(itemKey)){
+        playSfx('item_normal');
+      }
       if(itemKey==='pomodoro_tomato'){
-        const healAmount=Math.round(maxHp*0.10); healHero(healAmount); showSiteToast(`Ăn 🍅 Cà Chua Pomodoro: hồi ${healAmount} HP (10% Max HP).`,'success','🍅',3000);
+        const healAmount=Math.round(maxHp*0.10); healHero(healAmount,'item_heal'); showSiteToast(`Ăn 🍅 Cà Chua Pomodoro: hồi ${healAmount} HP (10% Max HP).`,'success','🍅',3000);
       } else if(itemKey==='flask_vitality'){
-        healHero(100); showRewardPanel('🧪 Sinh Mệnh Tinh Thủy','Máu đã được hồi phục.','🧪','COMMON',[{label:'HP',value:'+100',icon:'❤️'}]);
+        healHero(100,'item_heal'); showRewardPanel('🧪 Sinh Mệnh Tinh Thủy','Máu đã được hồi phục.','🧪','COMMON',[{label:'HP',value:'+100',icon:'❤️'}]);
       } else if(itemKey==='crimson_elixir'){
-        const amount=Math.max(350,Math.round(maxHp*0.5)); healHero(amount); showRewardPanel('🩸 Huyết Mạch Cổ Đan','Hồi phục trung bình.','🩸','RARE',[{label:'HP',value:`+${amount}`,icon:'❤️'}]);
+        const amount=Math.max(350,Math.round(maxHp*0.5)); healHero(amount,'item_heal'); showRewardPanel('🩸 Huyết Mạch Cổ Đan','Hồi phục trung bình.','🩸','RARE',[{label:'HP',value:`+${amount}`,icon:'❤️'}]);
       } else if(itemKey==='phoenix_elixir'){
-        state.heroHp=maxHp;playSfx('heal');showRewardPanel('🌟 Thần Dược Phục Sinh','Hồi đầy bình Máu.','🌟','LEGENDARY',[{label:'HP',value:'Đầy bình',icon:'❤️'}]);
+        state.heroHp=maxHp;playSfx('item_heal');showRewardPanel('🌟 Thần Dược Phục Sinh','Hồi đầy bình Máu.','🌟','LEGENDARY',[{label:'HP',value:'Đầy bình',icon:'❤️'}]);
       } else if(itemKey==='sapling_renewal'){
         state.activeBuffs.saplingRenewalExpires=now+30*60*1000*durMul;showRewardPanel('🍃 Hạt Bụi Thần Mộc','Hồi 10 HP sau mỗi đòn Boss.','🍃','RARE',[{label:'Thời gian',value:`30 phút × ${durMul}`,icon:'⏱️'}]);
       } else if(itemKey==='vampiric_draught'){
